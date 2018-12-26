@@ -6,8 +6,10 @@ import java.util.Scanner;
 
 public class ConsoleHelper {
 
+
     private static final Scanner in = new Scanner(System.in);
     private Properties properties;
+
 
     public ConsoleHelper(Properties properties) {
         this.properties = properties;
@@ -28,10 +30,8 @@ public class ConsoleHelper {
     public void writeCollectionToConsole(Collection<?> coll) {
         if (coll.isEmpty()) {
             System.out.println(properties.getProperty("empty_result"));
-        } else {
-            coll.forEach(System.out::println);
-        }
-    }
+        } else {}}
+
 
     public String[] getEntityFieldsArray(String actionPropertyName) {
         String input = "";

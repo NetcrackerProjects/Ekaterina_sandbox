@@ -27,10 +27,10 @@ public class UserInteraction {
     void processAction(int actionCode) {
         switch (actionCode) {
             case 1:
-                getGigsInfoToShow(1);
+                printGigsCollection(1);
                 break;
             case 2:
-                getGigsInfoToShow(2);
+                printGigsCollection(2);
                 break;
             case 3:
                 prepareGigForInsertion();
@@ -47,7 +47,7 @@ public class UserInteraction {
         }
     }
 
-    private void getGigsInfoToShow(int actionCode) {
+    private void printGigsCollection(int actionCode) {
         Collection<Gig> gigs;
         if (actionCode == 1) {
             gigs = repository.getGigsCollection();
@@ -77,10 +77,10 @@ public class UserInteraction {
             } else {
                 helper.writeStringToConsole(properties.getProperty("location_is_busy"));
             }
-        } catch(AddingToDatabaseException e){
-                helper.writeStringToConsole(properties.getProperty("adding_to_db_exc"));
         } catch (CheckingIfLocationIsBusyException e) {
             helper.writeStringToConsole(properties.getProperty("checking_location_exc"));
+        } catch(AddingToDatabaseException e){
+            helper.writeStringToConsole(properties.getProperty("adding_to_db_exc"));
         }
     }
 

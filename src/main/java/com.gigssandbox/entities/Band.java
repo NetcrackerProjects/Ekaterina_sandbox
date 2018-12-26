@@ -11,6 +11,7 @@ import java.util.Collection;
 @EqualsAndHashCode
 @Builder(toBuilder = true)
 @Getter
+
 @Setter
 public class Band {
     private int id;

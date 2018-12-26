@@ -4,7 +4,6 @@ import com.gigssandbox.entities.Band;
 import com.gigssandbox.entities.Gig;
 import com.gigssandbox.exceptions.AddingToDatabaseException;
 import com.gigssandbox.exceptions.CheckingIfLocationIsBusyException;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -49,7 +48,7 @@ public class GigsRepository {
         return Collections.emptyList();
     }
 
-    void addNewGig(Gig gig) throws AddingToDatabaseException {
+    public void addNewGig(Gig gig) throws AddingToDatabaseException {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS); PreparedStatement statementForId = connection.prepareStatement("SELECT MAX(id) + 1 from gigs"); PreparedStatement mainStatement = connection.prepareStatement("INSERT INTO gigs values (?,?,?,?,?)")) {
             int id = getNextAvailableId(statementForId);
             mainStatement.setInt(1, id);
