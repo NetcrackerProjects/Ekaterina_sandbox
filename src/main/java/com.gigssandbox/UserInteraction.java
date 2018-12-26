@@ -3,6 +3,7 @@ package com.gigssandbox;
 import com.gigssandbox.entities.Band;
 import com.gigssandbox.entities.Gig;
 import com.gigssandbox.exceptions.AddingToDatabaseException;
+import com.gigssandbox.exceptions.CheckingIfLocationIsBusyException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,24 +12,25 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 
-class UserInteraction {
+public class UserInteraction {
 
-    private GigsRepository repository = new GigsRepository();
+    private GigsRepository repository;
     private ConsoleHelper helper;
     private Properties properties;
 
-    UserInteraction(Properties properties, ConsoleHelper helper) {
+    public UserInteraction(Properties properties, ConsoleHelper helper, GigsRepository repository) {
         this.properties = properties;
         this.helper = helper;
+        this.repository = repository;
     }
 
     void processAction(int actionCode) {
         switch (actionCode) {
             case 1:
-                printGigsCollection(1);
+                getGigsInfoToShow(1);
                 break;
             case 2:
-                printGigsCollection(2);
+                getGigsInfoToShow(2);
                 break;
             case 3:
                 prepareGigForInsertion();
@@ -45,7 +47,7 @@ class UserInteraction {
         }
     }
 
-    private void printGigsCollection(int actionCode) {
+    private void getGigsInfoToShow(int actionCode) {
         Collection<Gig> gigs;
         if (actionCode == 1) {
             gigs = repository.getGigsCollection();
@@ -69,10 +71,16 @@ class UserInteraction {
                 .date(LocalDateTime.parse(gigFields[3], DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .build();
         try {
-            repository.addNewGig(gig);
-            helper.writeStringToConsole(properties.getProperty("done"));
-        } catch (AddingToDatabaseException e) {
-            helper.writeStringToConsole(properties.getProperty("adding_to_db_exc"));
+            if (repository.checkIfPlaceIsAlreadyBusy(gig)) {
+                repository.addNewGig(gig);
+                helper.writeStringToConsole(properties.getProperty("done"));
+            } else {
+                helper.writeStringToConsole(properties.getProperty("location_is_busy"));
+            }
+        } catch(AddingToDatabaseException e){
+                helper.writeStringToConsole(properties.getProperty("adding_to_db_exc"));
+        } catch (CheckingIfLocationIsBusyException e) {
+            helper.writeStringToConsole(properties.getProperty("checking_location_exc"));
         }
     }
 

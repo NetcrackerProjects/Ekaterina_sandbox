@@ -4,11 +4,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-
 public class MainClass {
 
     public static void main(String[] args) {
         Properties properties = new Properties();
+        GigsRepository repository = new GigsRepository();
         try {
             properties.load(new FileInputStream("src/main/resources/strings.properties"));
         } catch (IOException e) {
@@ -16,7 +16,7 @@ public class MainClass {
         }
 
         ConsoleHelper helper = new ConsoleHelper(properties);
-        UserInteraction interaction = new UserInteraction(properties, helper);
+        UserInteraction interaction = new UserInteraction(properties, helper, repository);
 
         helper.writeStringToConsole(properties.getProperty("hello"));
         helper.writeStringToConsole(properties.getProperty("choose_action"));

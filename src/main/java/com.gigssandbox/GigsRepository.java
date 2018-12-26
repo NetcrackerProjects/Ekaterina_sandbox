@@ -3,6 +3,7 @@ package com.gigssandbox;
 import com.gigssandbox.entities.Band;
 import com.gigssandbox.entities.Gig;
 import com.gigssandbox.exceptions.AddingToDatabaseException;
+import com.gigssandbox.exceptions.CheckingIfLocationIsBusyException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,10 +17,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 
-class GigsRepository {
+public class GigsRepository {
     private static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String USER = "postgres";
-    private static final String PASS = "postgrespass1488";
+    private static final String PASS = "postgres";
 
     Collection<Gig> getGigsCollection(String... group) {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS); Statement statement = connection.createStatement(); PreparedStatement statementWithParam = connection.prepareStatement("SELECT * FROM gigs WHERE date >= CURRENT_DATE AND (headliner = ? OR support = ?)")) {
@@ -75,6 +76,22 @@ class GigsRepository {
         } catch (SQLException e) {
             throw new AddingToDatabaseException();
         }
+    }
+
+    boolean checkIfPlaceIsAlreadyBusy(Gig gig) throws CheckingIfLocationIsBusyException {
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS); PreparedStatement statement = connection.prepareStatement("SELECT COUNT(id) from gigs where location = ? AND date = ?")) {
+            statement.setString(1, gig.getLocation());
+            statement.setTimestamp(2, Timestamp.valueOf(gig.getDate()));
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                if (resultSet.getInt(1) == 0) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            throw new CheckingIfLocationIsBusyException();
+        }
+        return false;
     }
 
     private int getNextAvailableId(PreparedStatement statementForId) throws SQLException {

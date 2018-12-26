@@ -1,4 +1,4 @@
 package com.gigssandbox.exceptions;
 
-public class CheckingIfPlaceIsBusyException {
+public class CheckingIfLocationIsBusyException extends Exception {
 }

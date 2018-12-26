@@ -1,6 +1,8 @@
 package com.gigssandbox.tests;
 
 import com.gigssandbox.ConsoleHelper;
+import com.gigssandbox.GigsRepository;
+import com.gigssandbox.UserInteraction;
 import com.gigssandbox.entities.Band;
 import org.junit.After;
 import org.junit.Assert;
@@ -18,19 +20,19 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class WriteToConsoleTest {
-    private ByteArrayInputStream input;
+public class ConsoleHelperTest {
     private ByteArrayOutputStream output;
     private PrintStream oldOut;
     private ConsoleHelper helper;
+    private UserInteraction interaction;
 
     @Before
     public void setUp() {
+        System.setIn(new ByteArrayInputStream("1 lorem ipsum is not actually a fish".getBytes()));
         oldOut = System.out;
         output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
@@ -41,6 +43,7 @@ public class WriteToConsoleTest {
             e.printStackTrace();
         }
         helper = new ConsoleHelper(properties);
+        interaction = new UserInteraction(properties, helper, Mockito.mock(GigsRepository.class));
     }
 
     @After
@@ -63,7 +66,6 @@ public class WriteToConsoleTest {
         fakeBands.add(Mockito.mock(Band.class));
         String expected = fakeBands.stream().map(Band::toString).collect(Collectors.joining());
         helper.writeCollectionToConsole(fakeBands);
-        //TODO how to change only last
         Assert.assertEquals(expected, output.toString().replaceAll("[\n\r]", ""));
     }
 
@@ -78,9 +80,16 @@ public class WriteToConsoleTest {
     @Test
     public void shouldReadIntegerFromConsoleWhenMethodIsCalled() {
         int expectedInt = 1;
-        input = new ByteArrayInputStream(String.valueOf(expectedInt).getBytes());
-        System.setIn(input);
         int given = helper.readInt();
         Assert.assertEquals(expectedInt, given);
     }
+
+    @Test
+    public void shouldReadStringFromConsoleWhenMethodIsCalled() {
+        String expectedString = "lorem ipsum is not actually a fish";
+        String given = helper.readString();
+        Assert.assertEquals(expectedString, given.replaceFirst("\\s+", ""));
+    }
+
+
 }
