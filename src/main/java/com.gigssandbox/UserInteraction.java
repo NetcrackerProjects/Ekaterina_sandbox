@@ -5,45 +5,65 @@ import com.gigssandbox.entities.Gig;
 import com.gigssandbox.exceptions.AddingToDatabaseException;
 import com.gigssandbox.exceptions.CheckingIfLocationIsBusyException;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Properties;
 
 public class UserInteraction {
 
     private GigsRepository repository;
     private ConsoleHelper helper;
-    private Properties properties;
+    private DataProcessor processor;
 
-    public UserInteraction(Properties properties, ConsoleHelper helper, GigsRepository repository) {
-        this.properties = properties;
-        this.helper = helper;
-        this.repository = repository;
+    public UserInteraction() {
+        repository = new GigsRepository();
+        helper = new ConsoleHelper();
+        processor = new DataProcessor();
     }
 
-    void processAction(int actionCode) {
-        switch (actionCode) {
-            case 1:
-                printGigsCollection(1);
-                break;
-            case 2:
-                printGigsCollection(2);
-                break;
-            case 3:
-                prepareGigForInsertion();
-                break;
-            case 4:
-                prepareBandForInsertion();
-                break;
-            case 5:
-                helper.writeStringToConsole(properties.getProperty("say_goodbye"));
-                System.exit(0);
-            default:
-                helper.writeStringToConsole(properties.getProperty("unsupported"));
-                break;
+    void interact() {
+        int actionCode;
+
+        helper.writeStringFromPropertiesToConsole("hello");
+        helper.writeStringFromPropertiesToConsole("choose_action");
+
+        while ((actionCode = helper.readInt()) > 0) {
+            switch (actionCode) {
+                case 1:
+                    printGigsCollection(1);
+                    break;
+                case 2:
+                    printGigsCollection(2);
+                    break;
+                case 3:
+                    insertGig();
+                    break;
+                case 4:
+                    insertBand();
+                    break;
+                case 5:
+                    helper.writeStringFromPropertiesToConsole("say_goodbye");
+                    System.exit(0);
+                default:
+                    helper.writeStringFromPropertiesToConsole("unsupported");
+                    break;
+            }
+            helper.writeStringFromPropertiesToConsole("choose_action");
+        }
+    }
+
+    void insertGig() {
+        helper.writeStringFromPropertiesToConsole("add_gig_info");
+        Gig gig = processor.convertStringArrayToGig(helper.getEntityFieldsArray());
+        try {
+            if (repository.checkIfPlaceIsAlreadyBusy(gig)) {
+                repository.addNewGig(gig);
+                helper.writeStringFromPropertiesToConsole("done");
+            } else {
+                helper.writeStringFromPropertiesToConsole("location_is_busy");
+            }
+        } catch (CheckingIfLocationIsBusyException e) {
+            helper.writeStringFromPropertiesToConsole("checking_location_exc");
+        } catch(AddingToDatabaseException e){
+            helper.writeStringFromPropertiesToConsole("adding_to_db_exc");
         }
     }
 
@@ -52,7 +72,7 @@ public class UserInteraction {
         if (actionCode == 1) {
             gigs = repository.getGigsCollection();
         } else {
-            helper.writeStringToConsole(properties.getProperty("write_band_name"));
+            helper.writeStringFromPropertiesToConsole("write_band_name");
             String bandName = "";
             while ((bandName.isEmpty())) {
                 bandName = helper.readString();
@@ -62,43 +82,14 @@ public class UserInteraction {
         helper.writeCollectionToConsole(gigs);
     }
 
-    private void prepareGigForInsertion() {
-        String[] gigFields = helper.getEntityFieldsArray("add_gig_info");
-        Gig gig = Gig.builder()
-                .headliner(gigFields[0])
-                .support(gigFields[1])
-                .location(gigFields[2])
-                .date(LocalDateTime.parse(gigFields[3], DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                .build();
-        try {
-            if (repository.checkIfPlaceIsAlreadyBusy(gig)) {
-                repository.addNewGig(gig);
-                helper.writeStringToConsole(properties.getProperty("done"));
-            } else {
-                helper.writeStringToConsole(properties.getProperty("location_is_busy"));
-            }
-        } catch (CheckingIfLocationIsBusyException e) {
-            helper.writeStringToConsole(properties.getProperty("checking_location_exc"));
-        } catch(AddingToDatabaseException e){
-            helper.writeStringToConsole(properties.getProperty("adding_to_db_exc"));
-        }
-    }
-
-    private void prepareBandForInsertion() {
-        String[] bandFields = helper.getEntityFieldsArray("add_band_info");
-        String[] membersArray = Arrays.stream(bandFields[1].split(",")).map(String::trim).toArray(String[]::new);
-        Band band = Band.builder()
-                .name(bandFields[0])
-                .members(new ArrayList<>(Arrays.asList(membersArray)))
-                .creationYear(Short.parseShort(bandFields[2]))
-                .city(bandFields[3])
-                .genre(bandFields[4])
-                .build();
+    private void insertBand() {
+        helper.writeStringFromPropertiesToConsole("add_band_info");
+        Band band = processor.convertArrayToBand(helper.getEntityFieldsArray());
         try {
             repository.addNewBand(band);
-            helper.writeStringToConsole(properties.getProperty("done"));
+            helper.writeStringFromPropertiesToConsole("done");
         } catch (AddingToDatabaseException e) {
-            helper.writeStringToConsole(properties.getProperty("adding_to_db_exc"));
+            helper.writeStringFromPropertiesToConsole("adding_to_db_exc");
         }
     }
 

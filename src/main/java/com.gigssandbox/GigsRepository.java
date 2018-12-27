@@ -48,7 +48,7 @@ public class GigsRepository {
         return Collections.emptyList();
     }
 
-    public void addNewGig(Gig gig) throws AddingToDatabaseException {
+    void addNewGig(Gig gig) throws AddingToDatabaseException {
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASS); PreparedStatement statementForId = connection.prepareStatement("SELECT MAX(id) + 1 from gigs"); PreparedStatement mainStatement = connection.prepareStatement("INSERT INTO gigs values (?,?,?,?,?)")) {
             int id = getNextAvailableId(statementForId);
             mainStatement.setInt(1, id);

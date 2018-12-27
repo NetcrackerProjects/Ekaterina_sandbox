@@ -1,8 +1,5 @@
-package com.gigssandbox.tests;
+package com.gigssandbox;
 
-import com.gigssandbox.ConsoleHelper;
-import com.gigssandbox.GigsRepository;
-import com.gigssandbox.UserInteraction;
 import com.gigssandbox.entities.Band;
 import org.junit.After;
 import org.junit.Assert;
@@ -14,12 +11,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 
@@ -28,7 +22,6 @@ public class ConsoleHelperTest {
     private ByteArrayOutputStream output;
     private PrintStream oldOut;
     private ConsoleHelper helper;
-    private UserInteraction interaction;
 
     @Before
     public void setUp() {
@@ -36,14 +29,7 @@ public class ConsoleHelperTest {
         oldOut = System.out;
         output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
-        Properties properties = new Properties();
-        try {
-            properties.load(new FileInputStream("src/main/resources/strings.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        helper = new ConsoleHelper(properties);
-        interaction = new UserInteraction(properties, helper, Mockito.mock(GigsRepository.class));
+        helper = new ConsoleHelper();
     }
 
     @After
@@ -91,5 +77,11 @@ public class ConsoleHelperTest {
         Assert.assertEquals(expectedString, given.replaceFirst("\\s+", ""));
     }
 
+    @Test
+    public void shouldWriteStringFromPropertiesWhenPropertyNameGiven() {
+        String expectedString = "This is test";
+        helper.writeStringFromPropertiesToConsole("test");
+        Assert.assertEquals(expectedString, output.toString().replaceAll("[\n\r]", ""));
+    }
 
 }
