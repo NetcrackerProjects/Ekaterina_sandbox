@@ -7,89 +7,85 @@ import com.gigssandbox.exceptions.CheckingIfLocationIsBusyException;
 
 import java.util.Collection;
 
-public class UserInteraction {
+class UserInteraction {
 
-    private GigsRepository repository;
-    private ConsoleHelper helper;
-    private DataProcessor processor;
+    private GigsRepository gigsRepository;
+    private UserMessenger userMessenger;
+    private DataProcessor dataProcessor;
 
-    public UserInteraction() {
-        repository = new GigsRepository();
-        helper = new ConsoleHelper();
-        processor = new DataProcessor();
+    UserInteraction() {
+        this.gigsRepository = new GigsRepository();
+        this.userMessenger = new UserMessenger();
+        this.dataProcessor = new DataProcessor();
     }
 
-    void interact() {
-        int actionCode;
+    void startInteraction() {
+        userMessenger.sendMessage("hello");
 
-        helper.writeStringFromPropertiesToConsole("hello");
-        helper.writeStringFromPropertiesToConsole("choose_action");
-
-        while ((actionCode = helper.readInt()) > 0) {
-            switch (actionCode) {
-                case 1:
+        Command currentCommand = userMessenger.nextCommand();
+        while (!currentCommand.equals(Command.EXIT)) {
+            switch (currentCommand) {
+                case PRINT_GIGS:
                     printGigsCollection(1);
                     break;
-                case 2:
+                case PRINT_GIGS_BY_BAND:
                     printGigsCollection(2);
                     break;
-                case 3:
+                case ADD_GIG:
                     insertGig();
                     break;
-                case 4:
+                case ADD_BAND:
                     insertBand();
                     break;
-                case 5:
-                    helper.writeStringFromPropertiesToConsole("say_goodbye");
-                    System.exit(0);
-                default:
-                    helper.writeStringFromPropertiesToConsole("unsupported");
-                    break;
+                case UNSUPPORTED:
+                    userMessenger.sendMessage("unsuported");
             }
-            helper.writeStringFromPropertiesToConsole("choose_action");
+            userMessenger.sendMessage("choose_action");
+            currentCommand = userMessenger.nextCommand();
         }
+        userMessenger.sayGoodbye();
     }
 
-    void insertGig() {
-        helper.writeStringFromPropertiesToConsole("add_gig_info");
-        Gig gig = processor.convertStringArrayToGig(helper.getEntityFieldsArray());
+    private void insertGig() {
+        userMessenger.sendMessage("add_gig_info");
+        Gig gig = dataProcessor.convertStringArrayToGig(userMessenger.getEntityFieldsArray());
         try {
-            if (repository.checkIfPlaceIsAlreadyBusy(gig)) {
-                repository.addNewGig(gig);
-                helper.writeStringFromPropertiesToConsole("done");
+            if (gigsRepository.checkIfPlaceIsAlreadyBusy(gig)) {
+                gigsRepository.addNewGig(gig);
+                userMessenger.sendMessage("done");
             } else {
-                helper.writeStringFromPropertiesToConsole("location_is_busy");
+                userMessenger.sendMessage("location_is_busy");
             }
         } catch (CheckingIfLocationIsBusyException e) {
-            helper.writeStringFromPropertiesToConsole("checking_location_exc");
+            userMessenger.sendMessage("checking_location_exc");
         } catch(AddingToDatabaseException e){
-            helper.writeStringFromPropertiesToConsole("adding_to_db_exc");
+            userMessenger.sendMessage("adding_to_db_exc");
         }
     }
 
     private void printGigsCollection(int actionCode) {
         Collection<Gig> gigs;
         if (actionCode == 1) {
-            gigs = repository.getGigsCollection();
+            gigs = gigsRepository.getGigsCollection();
         } else {
-            helper.writeStringFromPropertiesToConsole("write_band_name");
+            userMessenger.sendMessage("write_band_name");
             String bandName = "";
             while ((bandName.isEmpty())) {
-                bandName = helper.readString();
+                bandName = userMessenger.readString();
             }
-            gigs = repository.getGigsCollection(bandName);
+            gigs = gigsRepository.getGigsCollection(bandName);
         }
-        helper.writeCollectionToConsole(gigs);
+        userMessenger.writeCollectionToConsole(gigs);
     }
 
     private void insertBand() {
-        helper.writeStringFromPropertiesToConsole("add_band_info");
-        Band band = processor.convertArrayToBand(helper.getEntityFieldsArray());
+        userMessenger.sendMessage("add_band_info");
+        Band band = dataProcessor.convertArrayToBand(userMessenger.getEntityFieldsArray());
         try {
-            repository.addNewBand(band);
-            helper.writeStringFromPropertiesToConsole("done");
+            gigsRepository.addNewBand(band);
+            userMessenger.sendMessage("done");
         } catch (AddingToDatabaseException e) {
-            helper.writeStringFromPropertiesToConsole("adding_to_db_exc");
+            userMessenger.sendMessage("adding_to_db_exc");
         }
     }
 

@@ -2,7 +2,8 @@ package com.gigssandbox;
 
 import com.gigssandbox.entities.Band;
 import org.junit.After;
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,31 +19,26 @@ import java.util.stream.Collectors;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConsoleHelperTest {
+public class UserMessengerTest {
     private ByteArrayOutputStream output;
     private PrintStream oldOut;
-    private ConsoleHelper helper;
+    private UserMessenger userMessenger;
 
     @Before
     public void setUp() {
-        System.setIn(new ByteArrayInputStream("1 lorem ipsum is not actually a fish".getBytes()));
         oldOut = System.out;
         output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
-        helper = new ConsoleHelper();
-    }
-
-    @After
-    public void cleanUpStreams() {
-        System.setIn(System.in);
-        System.setOut(oldOut);
+        userMessenger = new UserMessenger();
     }
 
     @Test
     public void shouldWriteStringToConsoleWhenMethodIsCalled() {
         String testString = "lorem ipsum is not actually a fish";
-        helper.writeStringToConsole(testString);
-        Assert.assertEquals(testString, output.toString().replaceAll("[\n\r]", ""));
+
+        userMessenger.writeStringToConsole(testString);
+
+        assertEquals(testString, output.toString().replaceAll("[\n\r]", ""));
     }
 
     @Test
@@ -51,37 +47,75 @@ public class ConsoleHelperTest {
         fakeBands.add(Mockito.mock(Band.class));
         fakeBands.add(Mockito.mock(Band.class));
         String expected = fakeBands.stream().map(Band::toString).collect(Collectors.joining());
-        helper.writeCollectionToConsole(fakeBands);
-        Assert.assertEquals(expected, output.toString().replaceAll("[\n\r]", ""));
+
+        userMessenger.writeCollectionToConsole(fakeBands);
+
+        assertEquals(expected, output.toString().replaceAll("[\n\r]", ""));
     }
 
     @Test
     public void shouldWriteThatResultIsEmptyWhenCollectionIsEmpty() {
         Collection<Band> fakeBands = new ArrayList<>();
         String expected = "Result is empty";
-        helper.writeCollectionToConsole(fakeBands);
-        Assert.assertEquals(expected, output.toString().replaceAll("[\n\r]", ""));
+
+        userMessenger.writeCollectionToConsole(fakeBands);
+
+        assertEquals(expected, output.toString().replaceAll("[\n\r]", ""));
     }
 
     @Test
     public void shouldReadIntegerFromConsoleWhenMethodIsCalled() {
+        System.setIn(new ByteArrayInputStream("1".getBytes()));
         int expectedInt = 1;
-        int given = helper.readInt();
-        Assert.assertEquals(expectedInt, given);
+
+        int actual = userMessenger.readInt();
+
+        assertEquals(expectedInt, actual);
     }
 
     @Test
     public void shouldReadStringFromConsoleWhenMethodIsCalled() {
+        System.setIn(new ByteArrayInputStream("lorem ipsum is not actually a fish".getBytes()));
         String expectedString = "lorem ipsum is not actually a fish";
-        String given = helper.readString();
-        Assert.assertEquals(expectedString, given.replaceFirst("\\s+", ""));
+
+        String actual = userMessenger.readString();
+
+        assertEquals(expectedString, actual);
     }
 
     @Test
     public void shouldWriteStringFromPropertiesWhenPropertyNameGiven() {
         String expectedString = "This is test";
-        helper.writeStringFromPropertiesToConsole("test");
-        Assert.assertEquals(expectedString, output.toString().replaceAll("[\n\r]", ""));
+
+        userMessenger.sendMessage("test");
+
+        assertEquals(expectedString, output.toString().replaceAll("[\n\r]", ""));
+    }
+
+    @Test
+    public void shouldWriteCorrectCommandWhenInputIsCorrect() {
+        System.setIn(new ByteArrayInputStream("3".getBytes()));
+        Command expectedCommand = Command.ADD_GIG;
+
+        Command actualCommand = userMessenger.nextCommand();
+
+        assertEquals(expectedCommand, actualCommand);
+    }
+
+    @Test
+    public void shouldWriteUnsupportedWhenInputIsInorrect() {
+        System.setIn(new ByteArrayInputStream("6".getBytes()));
+        Command expectedCommand = Command.UNSUPPORTED;
+
+        Command actualCommand = userMessenger.nextCommand();
+
+        assertEquals(expectedCommand, actualCommand);
+    }
+
+    @After
+    public void cleanUpStreams() {
+        System.setIn(System.in);
+        System.setOut(oldOut);
     }
 
 }

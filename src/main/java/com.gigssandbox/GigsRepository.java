@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 
-public class GigsRepository {
+class GigsRepository {
     private static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String USER = "postgres";
     private static final String PASS = "postgres";
