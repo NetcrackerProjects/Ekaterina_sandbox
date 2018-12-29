@@ -4,6 +4,7 @@ import com.gigssandbox.entities.Band;
 import com.gigssandbox.entities.Gig;
 import com.gigssandbox.exceptions.AddingToDatabaseException;
 import com.gigssandbox.exceptions.CheckingIfLocationIsBusyException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -96,6 +97,7 @@ class GigsRepository {
     private int getNextAvailableId(PreparedStatement statementForId) throws SQLException {
         ResultSet resultSetWithId = statementForId.executeQuery();
         int id = 0;
+
         while (resultSetWithId.next()) {
             id = resultSetWithId.getInt(1);
         }

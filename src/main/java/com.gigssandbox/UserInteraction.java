@@ -7,29 +7,31 @@ import com.gigssandbox.exceptions.CheckingIfLocationIsBusyException;
 
 import java.util.Collection;
 
-class UserInteraction {
 
+class UserInteraction {
     private GigsRepository gigsRepository;
     private UserMessenger userMessenger;
     private DataProcessor dataProcessor;
+    private ConsoleIOHandler consoleIOHandler;
 
     UserInteraction() {
         this.gigsRepository = new GigsRepository();
         this.userMessenger = new UserMessenger();
         this.dataProcessor = new DataProcessor();
+        this.consoleIOHandler = new ConsoleIOHandler();
     }
 
     void startInteraction() {
-        userMessenger.sendMessage("hello");
+        Command currentCommand;
 
-        Command currentCommand = userMessenger.nextCommand();
-        while (!currentCommand.equals(Command.EXIT)) {
+        userMessenger.sendMessage("hello");
+        while ((currentCommand = userMessenger.getNextCommand()) != Command.EXIT) {
             switch (currentCommand) {
                 case PRINT_GIGS:
-                    printGigsCollection(1);
+                    printGigsCollection(GigsListOption.ALL_GROUPS);
                     break;
                 case PRINT_GIGS_BY_BAND:
-                    printGigsCollection(2);
+                    printGigsCollection(GigsListOption.CERTAIN_GROUP);
                     break;
                 case ADD_GIG:
                     insertGig();
@@ -38,17 +40,21 @@ class UserInteraction {
                     insertBand();
                     break;
                 case UNSUPPORTED:
-                    userMessenger.sendMessage("unsuported");
+                    userMessenger.sendMessage("unsupported");
+                    break;
             }
-            userMessenger.sendMessage("choose_action");
-            currentCommand = userMessenger.nextCommand();
         }
-        userMessenger.sayGoodbye();
+        exitProgram();
+    }
+
+    private void exitProgram() {
+        userMessenger.sendMessage("say_goodbye");
+        System.exit(0);
     }
 
     private void insertGig() {
         userMessenger.sendMessage("add_gig_info");
-        Gig gig = dataProcessor.convertStringArrayToGig(userMessenger.getEntityFieldsArray());
+        Gig gig = dataProcessor.convertStringArrayToGig(consoleIOHandler.getEntityFieldsArray());
         try {
             if (gigsRepository.checkIfPlaceIsAlreadyBusy(gig)) {
                 gigsRepository.addNewGig(gig);
@@ -58,29 +64,26 @@ class UserInteraction {
             }
         } catch (CheckingIfLocationIsBusyException e) {
             userMessenger.sendMessage("checking_location_exc");
-        } catch(AddingToDatabaseException e){
+        } catch (AddingToDatabaseException e) {
             userMessenger.sendMessage("adding_to_db_exc");
         }
     }
 
-    private void printGigsCollection(int actionCode) {
+    private void printGigsCollection(GigsListOption gigsListOption) {
         Collection<Gig> gigs;
-        if (actionCode == 1) {
+
+        if (gigsListOption == GigsListOption.ALL_GROUPS) {
             gigs = gigsRepository.getGigsCollection();
         } else {
             userMessenger.sendMessage("write_band_name");
-            String bandName = "";
-            while ((bandName.isEmpty())) {
-                bandName = userMessenger.readString();
-            }
-            gigs = gigsRepository.getGigsCollection(bandName);
+            gigs = gigsRepository.getGigsCollection(consoleIOHandler.readString());
         }
-        userMessenger.writeCollectionToConsole(gigs);
+        consoleIOHandler.writeCollection(gigs);
     }
 
     private void insertBand() {
         userMessenger.sendMessage("add_band_info");
-        Band band = dataProcessor.convertArrayToBand(userMessenger.getEntityFieldsArray());
+        Band band = dataProcessor.convertArrayToBand(consoleIOHandler.getEntityFieldsArray());
         try {
             gigsRepository.addNewBand(band);
             userMessenger.sendMessage("done");
@@ -89,4 +92,8 @@ class UserInteraction {
         }
     }
 
+    private enum GigsListOption {
+        ALL_GROUPS,
+        CERTAIN_GROUP
+    }
 }

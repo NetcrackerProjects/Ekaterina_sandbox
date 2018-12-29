@@ -1,12 +1,12 @@
 package com.gigssandbox.entities;
 
-
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 
 @EqualsAndHashCode
 @Builder(toBuilder = true)
