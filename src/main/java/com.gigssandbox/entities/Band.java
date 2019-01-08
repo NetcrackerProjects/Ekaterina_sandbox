@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import java.util.Collection;
 
-
 @EqualsAndHashCode
 @Builder(toBuilder = true)
 @Getter
@@ -19,6 +18,7 @@ public class Band {
     private String city;
     private Short creationYear;
     private String genre;
+    private float rating;
 
     @Override
     public String toString() {
@@ -26,6 +26,7 @@ public class Band {
                 "\tmembers: " + String.join(", ", members) +
                 "\n\tcity: " + city +
                 "\n\tdate of creation: " + creationYear +
-                "\n\tgenre: " + genre;
+                "\n\tgenre: " + genre +
+                "\n\trating: " + rating;
     }
 }
