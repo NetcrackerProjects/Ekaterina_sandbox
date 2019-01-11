@@ -18,8 +18,9 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
 
-public class InputOutputHandlerTest {
-    private InputOutputHandler inputOutputHandler;
+
+public class ConsoleIOHandlerTest {
+    private ConsoleIOHandler consoleIOHandler;
     private ByteArrayOutputStream output;
     private PrintStream oldOut;
 
@@ -30,7 +31,7 @@ public class InputOutputHandlerTest {
     public void setUp() {
         this.oldOut = System.out;
         this.output = new ByteArrayOutputStream();
-        this.inputOutputHandler = new InputOutputHandler();
+        this.consoleIOHandler = new ConsoleIOHandler();
         System.setOut(new PrintStream(output));
     }
 
@@ -39,7 +40,7 @@ public class InputOutputHandlerTest {
         String testStringKey = "test";
         String testStringValue = "This is test\n";
 
-        inputOutputHandler.writePreloadedString(testStringKey);
+        consoleIOHandler.writeString(testStringKey);
 
         assertEquals(testStringValue, output.toString());
     }
@@ -51,7 +52,7 @@ public class InputOutputHandlerTest {
         fakeBands.add(Mockito.mock(Band.class));
         String expectedStringWithElementsOfTheGivenCollection = fakeBands.stream().map(s -> s.toString().concat("\n")).collect(Collectors.joining());
 
-        inputOutputHandler.writeCollection(fakeBands);
+        consoleIOHandler.writeCollection(fakeBands);
 
         assertEquals(expectedStringWithElementsOfTheGivenCollection, output.toString());
     }
@@ -61,7 +62,7 @@ public class InputOutputHandlerTest {
         Collection<Band> fakeBands = new ArrayList<>();
         String resultIsEmptyString = "Result is empty\n";
 
-        inputOutputHandler.writeCollection(fakeBands);
+        consoleIOHandler.writeCollection(fakeBands);
 
         assertEquals(resultIsEmptyString, output.toString());
     }
@@ -71,7 +72,7 @@ public class InputOutputHandlerTest {
         systemInMock.provideLines("1");
         int oneInteger = 1;
 
-        int actualInt = inputOutputHandler.readInt();
+        int actualInt = consoleIOHandler.readInt();
 
         assertEquals(oneInteger, actualInt);
     }
@@ -81,7 +82,7 @@ public class InputOutputHandlerTest {
         systemInMock.provideLines("test");
         String testString = "test";
 
-        String actualString = inputOutputHandler.readString();
+        String actualString = consoleIOHandler.readString();
 
         assertEquals(testString, actualString);
     }
@@ -91,7 +92,7 @@ public class InputOutputHandlerTest {
         systemInMock.provideLines("text0;text1;text2;text3");
         String[] expectedArrayOfStrings = new String[]{"text0", "text1", "text2", "text3"};
 
-        String[] actualArrayOfStrings = inputOutputHandler.getEntityFieldsArray();
+        String[] actualArrayOfStrings = consoleIOHandler.getEntityFieldsArray();
 
         assertArrayEquals(expectedArrayOfStrings, actualArrayOfStrings);
     }
