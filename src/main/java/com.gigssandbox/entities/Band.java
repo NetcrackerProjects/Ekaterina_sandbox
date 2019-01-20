@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import java.util.Collection;
 
-
 @EqualsAndHashCode
 @Builder(toBuilder = true)
 @Getter
@@ -17,7 +16,7 @@ public class Band {
     private String name;
     private Collection<String> members;
     private String city;
-    private Short creationYear;
+    private int creationYear;
     private String genre;
 
     @Override
