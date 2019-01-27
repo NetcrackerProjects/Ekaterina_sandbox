@@ -1,23 +1,14 @@
 package com.gigssandbox.IO.console;
 
-import com.gigssandbox.IO.OutputHandler;
+import com.gigssandbox.IO.Output;
 
 import java.util.Collection;
 import java.util.Map;
 
-public class ConsoleOutputHandler implements OutputHandler {
-
-    public void write(String string) {
-        System.out.println(string);
-    }
-
-    public void writePreloaded(String propertyName) {
-        write(getStored(propertyName));
-    }
-
+public class ConsoleOutput implements Output {
     public void write(Collection<?> collection) {
         if (collection.isEmpty()) {
-            write(getStored("empty_result"));
+            write(stored("empty_result"));
         } else {
             collection.forEach(System.out::println);
         }
@@ -25,9 +16,17 @@ public class ConsoleOutputHandler implements OutputHandler {
 
     public void write(Map<String, String> map) {
         if (map.isEmpty()) {
-            write(getStored("empty_result"));
+            write(stored("empty_result"));
         } else {
             map.values().forEach(this::write);
         }
+    }
+
+    public void writeStored(String propertyName) {
+        write(stored(propertyName));
+    }
+
+    public void write(String string) {
+        System.out.println(string);
     }
 }

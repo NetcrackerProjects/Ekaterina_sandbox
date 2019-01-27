@@ -1,7 +1,12 @@
 package com.gigssandbox;
 
-import com.gigssandbox.IO.console.ConsoleOutputHandler;
+import com.gigssandbox.IO.console.ConsoleOutput;
 import com.gigssandbox.entities.Band;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,16 +14,12 @@ import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConsoleOutputHandlerTest {
-    private ConsoleOutputHandler consoleOutputHandler;
+public class ConsoleOutputTest {
+    private ConsoleOutput consoleOutput;
     private ByteArrayOutputStream output;
     private PrintStream oldOutput;
 
@@ -26,7 +27,7 @@ public class ConsoleOutputHandlerTest {
     public void setUp() {
         this.oldOutput = System.out;
         this.output = new ByteArrayOutputStream();
-        this.consoleOutputHandler = new ConsoleOutputHandler();
+        this.consoleOutput = new ConsoleOutput();
         System.setOut(new PrintStream(output));
     }
 
@@ -35,7 +36,7 @@ public class ConsoleOutputHandlerTest {
         String testStringKey = "test";
         String testStringValue = "This is test\n";
 
-        consoleOutputHandler.writePreloaded(testStringKey);
+        consoleOutput.writeStored(testStringKey);
 
         assertEquals(testStringValue, output.toString());
     }
@@ -45,7 +46,7 @@ public class ConsoleOutputHandlerTest {
         String testString = "test\n";
         String stringToBeWritten = "test";
 
-        consoleOutputHandler.write(stringToBeWritten);
+        consoleOutput.write(stringToBeWritten);
 
         assertEquals(testString, output.toString());
     }
@@ -57,30 +58,40 @@ public class ConsoleOutputHandlerTest {
         fakeBands.add(Mockito.mock(Band.class));
         String expectedStringWithElementsOfTheGivenCollection = fakeBands.stream().map(s -> s.toString().concat("\n")).collect(Collectors.joining());
 
-        consoleOutputHandler.write(fakeBands);
+        consoleOutput.write(fakeBands);
 
         assertEquals(expectedStringWithElementsOfTheGivenCollection, output.toString());
     }
 
     @Test
     public void shouldWriteThatResultIsEmptyWhenCollectionIsEmpty() {
-        Collection<Band> fakeBands = new ArrayList<>();
-        String resultIsEmptyString = "Result is empty\n";
+        Collection<Band> fakeBands = Collections.emptyList();
+        String expectedOutput = "Result is empty\n";
 
-        consoleOutputHandler.write(fakeBands);
+        consoleOutput.write(fakeBands);
 
-        assertEquals(resultIsEmptyString, output.toString());
+        assertEquals(expectedOutput, output.toString());
     }
 
     @Test
-    public void shouldWriteKeysAndValuesWhenRespondMessageContentIsNotEmpty() {
+    public void shouldWriteKeysAndValuesWhenPassedMapIsNotEmpty() {
         Map<String, String> fakeParameters = new HashMap<>();
         fakeParameters.put("0", "Bulbasaur");
         fakeParameters.put("1", "Pikachu");
         fakeParameters.put("2", "Clefairy");
         String expectedOutput = "Bulbasaur\nPikachu\nClefairy\n";
 
-        consoleOutputHandler.write(fakeParameters);
+        consoleOutput.write(fakeParameters);
+
+        assertEquals(expectedOutput, output.toString());
+    }
+
+    @Test
+    public void shouldWriteThatResultIsEmptyWhenPassedMapIsEmpty() {
+        Map<String, String> emptyMap = Collections.emptyMap();
+        String expectedOutput = "Result is empty\n";
+
+        consoleOutput.write(emptyMap);
 
         assertEquals(expectedOutput, output.toString());
     }

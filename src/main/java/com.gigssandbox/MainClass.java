@@ -1,10 +1,10 @@
 package com.gigssandbox;
 
-import com.gigssandbox.IO.console.ConsoleInputHandler;
-import com.gigssandbox.IO.console.ConsoleOutputHandler;
+import com.gigssandbox.IO.console.ConsoleInput;
+import com.gigssandbox.IO.console.ConsoleOutput;
 
 public class MainClass {
     public static void main(String[] args) {
-        new UserActivityManager(new ConsoleInputHandler(), new ConsoleOutputHandler()).startInteracting();
+        new Activity(new ConsoleInput(), new ConsoleOutput()).beginReceivingAndProcessingCommands();
     }
 }

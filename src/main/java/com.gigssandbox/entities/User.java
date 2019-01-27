@@ -24,17 +24,8 @@ public class User {
     private Collection<Gig> vizitedGigs;
     private int rating;
     private LocalDateTime registrationDate;
-    private Community community;
     private boolean isAdmin;
     private boolean isCommunityAdmin;
-
-    public void joinCommunity(Community community) {
-        this.community = community;
-    }
-
-    public void leaveCommunity() {
-        this.community = null;
-    }
 
     @Override
     public String toString() {

@@ -5,19 +5,19 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RatingCalculatorTest {
-    private RatingCalculator ratingCalculator;
+public class RatingTest {
+    private Rating rating;
 
     @Before
     public void setUp() {
-        this.ratingCalculator = new RatingCalculator();
+        this.rating = new Rating();
     }
 
     @Test
     public void shouldCalculateBandRatingWhenParametersSatisfyTheirRanges() {
         int expectedRating = 31;
 
-        int actualRating = ratingCalculator.calculateBandRating(10,5,150,500);
+        int actualRating = rating.calculateBandRating(10,5,150,500);
 
         assertEquals(expectedRating, actualRating);
     }
@@ -26,7 +26,7 @@ public class RatingCalculatorTest {
     public void shouldThrowIllegalStateExceptionWhenParametersDoNotSatisfyTheirRanges() {
         int expectedRating = -8;
 
-        int actualRating = ratingCalculator.calculateBandRating(-1,-2,-100,-1);
+        int actualRating = rating.calculateBandRating(-1,-2,-100,-1);
 
         assertEquals(expectedRating, actualRating);
     }
@@ -35,7 +35,7 @@ public class RatingCalculatorTest {
     public void shouldCalculateUserRatingWhenParametersSatisfyTheirRanges() {
         int expectedRating = 38;
 
-        int actualRating = ratingCalculator.calculateUserRating(21, 1, 2, 1);
+        int actualRating = rating.calculateUserRating(21, 1, 2, 1);
 
         assertEquals(expectedRating, actualRating);
     }
@@ -44,7 +44,7 @@ public class RatingCalculatorTest {
     public void shouldThrowIllegalArgumentExceptionWhenParametersDoNotSatisfyTheirRanges() {
         int expectedRating = -148;
 
-        int actualRating = ratingCalculator.calculateUserRating(-10, -1, -1, -11);
+        int actualRating = rating.calculateUserRating(-10, -1, -1, -11);
 
         assertEquals(expectedRating, actualRating);
     }

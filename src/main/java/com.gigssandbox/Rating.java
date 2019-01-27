@@ -1,10 +1,9 @@
 package com.gigssandbox;
 
-class RatingCalculator {
-
+class Rating {
     int calculateBandRating(int givenGigs, int numberOfAlbums, int bandPageVisits, int gigsPagesVizits) {
         if (givenGigs < 0 || numberOfAlbums < 0 || bandPageVisits < 0 || gigsPagesVizits < 0) {
-            throw new IllegalArgumentException("Wrong parameter in the RatingCalculator#calculateBandRating method");
+            throw new IllegalArgumentException("Wrong parameter in the Rating#calculateBandRating method");
         }
         float gigsSummon = 0.3f * (givenGigs > 100 ? 1 : (float) givenGigs / 100f);
         float albumsSummon = 0.3f * (numberOfAlbums > 10 ? 1 : (float) numberOfAlbums / 10f);
@@ -15,7 +14,7 @@ class RatingCalculator {
 
     int calculateUserRating(int daysFromRegistration, int numberOfAttendedUnfamousGigs, int numberOfAttendedMiddleFamousGigs, int numberOfAttendedFamousGigs) {
         if (daysFromRegistration < 0 || numberOfAttendedUnfamousGigs < 0 || numberOfAttendedMiddleFamousGigs < 0 || numberOfAttendedFamousGigs < 0) {
-            throw new IllegalArgumentException("Wrong parameter in the RatingCalculator#calculateUserRating method");
+            throw new IllegalArgumentException("Wrong parameter in the Rating#calculateUserRating method");
         }
         return daysFromRegistration / 10 + numberOfAttendedUnfamousGigs * 6 + numberOfAttendedMiddleFamousGigs * 9 + numberOfAttendedFamousGigs * 12;
     }
