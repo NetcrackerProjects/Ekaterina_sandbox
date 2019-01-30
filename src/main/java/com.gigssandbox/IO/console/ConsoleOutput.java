@@ -22,10 +22,6 @@ public class ConsoleOutput implements Output {
         }
     }
 
-    public void writeStored(String propertyName) {
-        write(stored(propertyName));
-    }
-
     public void write(String string) {
         System.out.println(string);
     }

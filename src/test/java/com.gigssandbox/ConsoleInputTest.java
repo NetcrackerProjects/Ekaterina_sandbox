@@ -26,7 +26,7 @@ public class ConsoleInputTest {
         systemInMock.provideLines("Aladdin Abu Genie");
         String[] expectedArray = new String[]{"Aladdin", "Abu", "Genie"};
 
-        String[] actualArray = consoleInput.nextStringSplitted();
+        String[] actualArray = consoleInput.parametersForCommand();
 
         assertArrayEquals(expectedArray, actualArray);
     }

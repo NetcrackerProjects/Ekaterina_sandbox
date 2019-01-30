@@ -7,14 +7,16 @@ import com.gigssandbox.exceptions.UserIsNotRegisteredException;
 
 import java.util.Map;
 
-class MainService {
-    private String response;
+class UserCommandHandler {
+    private Response response;
     private UserService userService;
     private CommunityService communityService;
+    private ResponseReceiver responseReceiver;
 
-    MainService() {
-        this.userService = new UserService();
-        this.communityService = new CommunityService();
+    UserCommandHandler(UserService userService, CommunityService communityService, ResponseReceiver responseReceiver) {
+        this.userService = userService;
+        this.communityService = communityService;
+        this.responseReceiver = responseReceiver;
     }
 
     void process(Command command) {
@@ -33,49 +35,47 @@ class MainService {
                 removeUserFromCommunity();
                 break;
             case HELP:
-                response = "help";
+                response = Response.HELP;
                 break;
             case LOG_OUT:
-                response = "log_out";
+                response = Response.LOG_OUT_SUCCESS;
                 break;
             case NOT_ENOUGH_PARAMETERS:
-                response = "not_enough_parameters";
+                response = Response.NOT_ENOUGH_PARAMETERS;
                 break;
             default:
-                response = "unsupported";
+                response = Response.UNSUPPORTED;
                 break;
         }
+        responseReceiver.receive(response);
     }
 
     private void registerUser(String username, int passwordHash) {
         userService.registerUser(username, passwordHash);
         communityService.addUserToDefaultCommunity(userService.getUser(username));
-        response = "register";
+        response = Response.REGISTRATION_SUCCESS;
     }
 
     private void logUserIn(String username, int passwordHash) {
         try {
             userService.logUserIn(username, passwordHash);
-            response = "log_in";
+            response = Response.LOG_IN_SUCCESS;
 
         } catch (UserIsNotRegisteredException e) {
-            response = "not_registered";
+            response = Response.NOT_REGISTERED;
 
         } catch (IncorrectPasswordException e) {
-            response = "incorrect_password";
+            response = Response.INCORRECT_PASSWORD;
         }
     }
 
     private void addUserToCommunity(User user, String communityName) {
         communityService.addUserToCommunity(user, communityName);
-        response = "join_community";
+        response = Response.JOIN_COMMUNITY_SUCCESS;
     }
 
     private void removeUserFromCommunity() {
         communityService.removeUserFromCommunity(userService.currentUser());
-    }
-
-    String response() {
-        return response;
+        response = Response.LEAVE_COMMUNITY_SUCCESS;
     }
 }

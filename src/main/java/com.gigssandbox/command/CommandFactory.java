@@ -3,14 +3,9 @@ package com.gigssandbox.command;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandFromStringArray {
-    private String[] strings;
+public class CommandFactory {
 
-    public CommandFromStringArray(String[] strings) {
-        this.strings = strings;
-    }
-
-    public Command value() {
+    public static Command from(String... strings) {
         CommandType currentType;
         Map<String, String> parameters = new HashMap<>();
 
@@ -40,7 +35,7 @@ public class CommandFromStringArray {
         return new Command(currentType, parameters);
     }
 
-    private CommandType verifyParametersForCommand(String[] strings, CommandType commandType) {
+    private static CommandType verifyParametersForCommand(String[] strings, CommandType commandType) {
         if (((commandType == CommandType.LOG_IN || commandType == CommandType.REGISTER) && strings.length < 3)
                 || ((commandType == CommandType.GET_GIGS_BY_BAND || commandType == CommandType.JOIN_COMMUNITY) && strings.length < 2)) {
             return CommandType.NOT_ENOUGH_PARAMETERS;

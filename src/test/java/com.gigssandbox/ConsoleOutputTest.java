@@ -32,16 +32,6 @@ public class ConsoleOutputTest {
     }
 
     @Test
-    public void shouldWriteTestStringFromPropertiesWhenTestPropertyIsPassed() {
-        String testStringKey = "test";
-        String testStringValue = "This is test\n";
-
-        consoleOutput.writeStored(testStringKey);
-
-        assertEquals(testStringValue, output.toString());
-    }
-
-    @Test
     public void shouldWriteTestStringToConsoleWhenStringIsPassed() {
         String testString = "test\n";
         String stringToBeWritten = "test";

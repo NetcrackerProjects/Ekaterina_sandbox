@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ValuesStore {
-    private Properties properties;
+    private final Properties properties;
 
     public ValuesStore() {
         properties = new Properties();
