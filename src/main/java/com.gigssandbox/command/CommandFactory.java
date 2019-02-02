@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandFactory {
+    private CommandFactory() {
 
-    public static Command from(String... strings) {
+    }
+
+    public static Command createCommandFrom(String... strings) {
         CommandType currentType;
         Map<String, String> parameters = new HashMap<>();
 
@@ -21,7 +24,7 @@ public class CommandFactory {
             case LOG_IN:
             case REGISTER:
                 parameters.put("username", strings[1]);
-                parameters.put("password_hash", String.valueOf(strings[2].hashCode()));
+                parameters.put("password", strings[2]);
                 break;
             case GET_GIGS_BY_BAND:
                 parameters.put("band_name", strings[1]);

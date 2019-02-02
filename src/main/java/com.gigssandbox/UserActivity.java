@@ -8,7 +8,7 @@ import com.gigssandbox.command.Command;
 import com.gigssandbox.command.CommandFactory;
 import com.gigssandbox.command.CommandType;
 
-class UserActivity implements ResponseReceiver {
+class UserActivity {
     private final Input input;
     private final Output output;
     private final UserCommandHandler userCommandHandler;
@@ -16,7 +16,7 @@ class UserActivity implements ResponseReceiver {
     UserActivity(UserService userService, CommunityService communityService) {
         this.input = new ConsoleInput();
         this.output = new ConsoleOutput();
-        this.userCommandHandler = new UserCommandHandler(userService, communityService, this);
+        this.userCommandHandler = new UserCommandHandler(userService, communityService);
     }
 
     void start() {
@@ -24,15 +24,12 @@ class UserActivity implements ResponseReceiver {
 
         Command currentCommand;
         do {
-            currentCommand = CommandFactory.from((input.parametersForCommand()));
+            currentCommand = CommandFactory.createCommandFrom((input.parametersForCommand()));
 
-            userCommandHandler.process(currentCommand);
+            Response response = ResponseFactory.createResponseFrom(userCommandHandler.process(currentCommand));
+
+            output.write(response);
 
         } while (currentCommand.getType() != CommandType.LOG_OUT);
-    }
-
-    @Override
-    public void receive(Response response) {
-        output.write(response);
     }
 }

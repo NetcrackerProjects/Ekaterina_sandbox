@@ -6,7 +6,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 
 public class InputTest {
-
     @Test
     public void shouldGetArrayOfStringsFromSolidStringWhenElementSeparatorIsSemicolon() {
         String parametersInSolidString = "text0 text1 text2 text3";

@@ -86,6 +86,26 @@ public class ConsoleOutputTest {
         assertEquals(expectedOutput, output.toString());
     }
 
+    @Test
+    public void shouldWriteTestStringFromPropertiesWhenTestPropertyIsPassed() {
+        String testStringKey = "test";
+        String testStringValue = "This is test\n";
+
+        consoleOutput.writeStored(testStringKey);
+
+        assertEquals(testStringValue, output.toString());
+    }
+
+    @Test
+    public void shouldWriteRegistrationSuccessResponseValueWhenRegistrationCommandIsPassed() {
+        String expectedOutput = "You have successfully registered\n";
+        Response response = ResponseFactory.createResponseFrom(Result.REGISTRATION_SUCCESS);
+
+        consoleOutput.write(response);
+
+        assertEquals(expectedOutput, output.toString());
+    }
+
     @After
     public void tearDown() {
         System.setOut(oldOutput);

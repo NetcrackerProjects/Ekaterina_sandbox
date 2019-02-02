@@ -4,35 +4,28 @@ import com.gigssandbox.entities.User;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
 import com.gigssandbox.exceptions.UserIsNotRegisteredException;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 class UserService {
     private final Map<String, User> users;
-    private String currentUsername;
 
     UserService() {
         this.users = new HashMap<>();
     }
 
-    void registerUser(String username, int passwordHash) {
-        users.put(username, User.builder().username(username).passwordHash(passwordHash).build());
-        currentUsername = username;
+    void registerUser(String username, char[] password) {
+        users.put(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build());
     }
 
-    void logUserIn(String username, int passwordHash) throws UserIsNotRegisteredException, IncorrectPasswordException {
+    void logUserIn(String username, char[] password) throws UserIsNotRegisteredException, IncorrectPasswordException {
         if (!users.containsKey(username)) {
             throw new UserIsNotRegisteredException();
 
-        } else if (users.get(username).getPasswordHash() != passwordHash) {
+        } else if (users.get(username).getPasswordHash() != Arrays.hashCode(password)) {
             throw new IncorrectPasswordException();
         }
-
-        currentUsername = username;
-    }
-
-    User currentUser() {
-        return users.get(currentUsername);
     }
 
     User getUser(String username) {

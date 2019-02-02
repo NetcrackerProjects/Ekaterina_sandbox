@@ -3,6 +3,7 @@ package com.gigssandbox;
 import com.gigssandbox.entities.User;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
 import com.gigssandbox.exceptions.UserIsNotRegisteredException;
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,7 +13,8 @@ import org.mockito.internal.util.reflection.Whitebox;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
 
 public class UserServiceTest {
@@ -29,10 +31,10 @@ public class UserServiceTest {
     @Test
     public void shoudAddUserToUsersCollectionWhenUserTriesToRegister() {
         String username = "oliver_sykes";
-        String password = "poprockisthebest";
-        systemInMock.provideLines(username, password);
+        char[] password = "poprockisthebest".toCharArray();
+        systemInMock.provideLines(username, String.valueOf(password));
 
-        userService.registerUser(username, password.hashCode());
+        userService.registerUser(username, password);
 
         assertTrue(userService.exists(username));
     }
@@ -40,41 +42,29 @@ public class UserServiceTest {
     @Test
     public void shouldThrowUserNotRegisteredExceptionWhenUserCredentialsAreNotPresentInUsersMap() {
         String username = "ben_bruice";
-        String password = "everyday00playing00zeros";
+        char[] password = "everyday00playing00zeros".toCharArray();
 
-        Assertions.assertThrows(UserIsNotRegisteredException.class, () -> userService.logUserIn(username, password.hashCode()));
+        Assertions.assertThrows(UserIsNotRegisteredException.class, () -> userService.logUserIn(username, password));
     }
 
     @Test
     public void shouldThrowIncorrectPasswordExceptionWhenUserPassedIncorrectPassword() {
         String username = "Winnie";
-        String password = "The Pooh";
-        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(password.hashCode()).build()));
+        char[] password = "The Pooh".toCharArray();
+        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build()));
 
-        String incorrectPassword = "Pooh";
+        char[] incorrectPassword = "Pooh".toCharArray();
 
-        Assertions.assertThrows(IncorrectPasswordException.class, () -> userService.logUserIn(username, incorrectPassword.hashCode()));
+        Assertions.assertThrows(IncorrectPasswordException.class, () -> userService.logUserIn(username, incorrectPassword));
     }
 
     @Test
     public void shouldNotThrowAnyExceptionIfUserLoginAndPasswordAreCorrectAndPresentInSystem() {
         String username = "Winnie";
-        String password = "The Pooh";
-        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(password.hashCode()).build()));
+        char[] password = "The Pooh".toCharArray();
+        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build()));
 
-        Assertions.assertDoesNotThrow(() -> userService.logUserIn(username, password.hashCode()));
-    }
-
-    @Test
-    public void shouldReturnAliceWhenCurrentUserIsAlice() {
-        String username = "Alice";
-        User expectedCurrentUser = User.builder().username(username).build();
-        Whitebox.setInternalState(userService, "currentUsername", username);
-        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).build()));
-
-        User actualCurrentUser = userService.currentUser();
-
-        assertEquals(expectedCurrentUser, actualCurrentUser);
+        Assertions.assertDoesNotThrow(() -> userService.logUserIn(username, password));
     }
 
     @Test

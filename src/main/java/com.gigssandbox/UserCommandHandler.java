@@ -8,74 +8,68 @@ import com.gigssandbox.exceptions.UserIsNotRegisteredException;
 import java.util.Map;
 
 class UserCommandHandler {
-    private Response response;
     private UserService userService;
     private CommunityService communityService;
-    private ResponseReceiver responseReceiver;
+    private String username;
 
-    UserCommandHandler(UserService userService, CommunityService communityService, ResponseReceiver responseReceiver) {
+    UserCommandHandler(UserService userService, CommunityService communityService) {
         this.userService = userService;
         this.communityService = communityService;
-        this.responseReceiver = responseReceiver;
     }
 
-    void process(Command command) {
+    Result process(Command command) {
         Map<String, String> parameters = command.getParameters();
         switch (command.getType()) {
             case REGISTER:
-                registerUser(parameters.get("username"), Integer.parseInt(parameters.get("password_hash")));
-                break;
+                return registerUser(parameters.get("username"), parameters.get("password").toCharArray());
             case LOG_IN:
-                logUserIn(parameters.get("username"), Integer.parseInt(parameters.get("password_hash")));
-                break;
+                return logUserIn(parameters.get("username"), parameters.get("password").toCharArray());
             case JOIN_COMMUNITY:
-                addUserToCommunity(userService.currentUser(), parameters.get("community_name"));
-                break;
+                return addUserToCommunity(userService.getUser(username), parameters.get("community_name"));
             case LEAVE_COMMUNITY:
-                removeUserFromCommunity();
-                break;
+                return removeUserFromCommunity();
             case HELP:
-                response = Response.HELP;
-                break;
+                return Result.HELP;
             case LOG_OUT:
-                response = Response.LOG_OUT_SUCCESS;
-                break;
+                return Result.LOG_OUT_SUCCESS;
             case NOT_ENOUGH_PARAMETERS:
-                response = Response.NOT_ENOUGH_PARAMETERS;
-                break;
+                return Result.NOT_ENOUGH_PARAMETERS;
             default:
-                response = Response.UNSUPPORTED;
-                break;
+                return Result.UNSUPPORTED;
         }
-        responseReceiver.receive(response);
     }
 
-    private void registerUser(String username, int passwordHash) {
-        userService.registerUser(username, passwordHash);
+    private Result registerUser(String username, char[] password) {
+        this.username = username;
+
+        userService.registerUser(username, password);
         communityService.addUserToDefaultCommunity(userService.getUser(username));
-        response = Response.REGISTRATION_SUCCESS;
+
+        return Result.REGISTRATION_SUCCESS;
     }
 
-    private void logUserIn(String username, int passwordHash) {
+    private Result logUserIn(String username, char[] password) {
+        this.username = username;
+
         try {
-            userService.logUserIn(username, passwordHash);
-            response = Response.LOG_IN_SUCCESS;
+            userService.logUserIn(username, password);
+            return Result.LOG_IN_SUCCESS;
 
         } catch (UserIsNotRegisteredException e) {
-            response = Response.NOT_REGISTERED;
+            return Result.NOT_REGISTERED;
 
         } catch (IncorrectPasswordException e) {
-            response = Response.INCORRECT_PASSWORD;
+            return Result.INCORRECT_PASSWORD;
         }
     }
 
-    private void addUserToCommunity(User user, String communityName) {
+    private Result addUserToCommunity(User user, String communityName) {
         communityService.addUserToCommunity(user, communityName);
-        response = Response.JOIN_COMMUNITY_SUCCESS;
+        return Result.JOIN_COMMUNITY_SUCCESS;
     }
 
-    private void removeUserFromCommunity() {
-        communityService.removeUserFromCommunity(userService.currentUser());
-        response = Response.LEAVE_COMMUNITY_SUCCESS;
+    private Result removeUserFromCommunity() {
+        communityService.removeUserFromCommunity(userService.getUser(username));
+        return Result.LEAVE_COMMUNITY_SUCCESS;
     }
 }

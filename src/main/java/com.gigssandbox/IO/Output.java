@@ -8,19 +8,11 @@ public interface Output {
 
     void write(Collection<?> collection);
 
-    default void write(Response response) {
-        write(stored(from(response)));
-    }
+    void write(Response response);
 
-    default void writeStored(String propertyName) {
-        write(stored(propertyName));
-    }
-
-    default String from(Response response) {
-        return response.name().toLowerCase();
-    }
+    void writeStored(String propertyName);
 
     default String stored(String propertyName) {
-        return new ValuesStore().stored(propertyName);
+        return new ResponseStore().stored(propertyName);
     }
 }

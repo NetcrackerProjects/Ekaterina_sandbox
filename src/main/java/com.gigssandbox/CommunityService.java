@@ -25,7 +25,7 @@ class CommunityService {
     }
 
     void addUserToCommunity(User user, String communityName) {
-        communities.get(communityName).getMembers().add(user);
+        communities.get(communityName).add(user);
     }
 
     void removeUserFromCommunity(User user) {
@@ -34,7 +34,7 @@ class CommunityService {
                 .findFirst()
                 .orElse(DEFAULT_COMMUNITY);
 
-        communities.get(communityName).getMembers().remove(user);
+        communities.get(communityName).remove(user);
     }
 
     boolean communityContainsUser(String communityName, User user) {

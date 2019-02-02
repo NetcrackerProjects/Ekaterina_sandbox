@@ -24,11 +24,11 @@ public class Community {
     private Collection<User> members;
     private String chatroomName;
 
-    void addUser(User user) {
+    public void add(User user) {
         members.add(user);
     }
 
-    void removeUser(User user) {
+    public void remove(User user) {
         members.remove(user);
     }
 }
