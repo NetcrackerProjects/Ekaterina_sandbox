@@ -20,6 +20,7 @@ public class User {
     private int id;
     private String username;
     private int passwordHash;
+    private boolean loggedIn;
     private PersonalInfo personalInfo;
     private Collection<Gig> vizitedGigs;
     private int rating;

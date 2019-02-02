@@ -28,7 +28,6 @@ public class CommandFactoryTest {
     @Test
     public void shouldReturnGetGigsByBandCommandWhenZeroElementConsistsOfGetGigsByBandCommand() {
         String[] getGigsByBandArgs = new String[]{"get_gigs_by_band", "Oleg Gazmanov"};
-        Command commandFromStringArray = CommandFactory.createCommandFrom(getGigsByBandArgs);
         Command expectedCommand = new Command(CommandType.GET_GIGS_BY_BAND, Collections.singletonMap("band_name", getGigsByBandArgs[1]));
 
         Command actualCommand = CommandFactory.createCommandFrom(getGigsByBandArgs);
