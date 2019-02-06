@@ -2,6 +2,7 @@ package com.gigssandbox;
 
 import com.gigssandbox.entities.Community;
 import com.gigssandbox.entities.User;
+import com.gigssandbox.services.CommunityService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;

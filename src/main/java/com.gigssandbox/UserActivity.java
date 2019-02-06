@@ -7,6 +7,10 @@ import com.gigssandbox.IO.console.ConsoleOutput;
 import com.gigssandbox.command.Command;
 import com.gigssandbox.command.CommandFactory;
 import com.gigssandbox.command.CommandType;
+import com.gigssandbox.response.Response;
+import com.gigssandbox.response.ResponseFactory;
+import com.gigssandbox.services.CommunityService;
+import com.gigssandbox.services.UserService;
 
 class UserActivity {
     private final Input input;
@@ -20,15 +24,14 @@ class UserActivity {
     }
 
     void start() {
-        output.writeStored("help");
 
         Command currentCommand;
         do {
-            currentCommand = CommandFactory.createCommandFrom((input.parametersForCommand()));
+            currentCommand = CommandFactory.create((input.receive()));
 
-            Response response = ResponseFactory.createResponseFrom(userCommandHandler.process(currentCommand));
+            Response response = ResponseFactory.create(userCommandHandler.process(currentCommand));
 
-            output.write(response);
+            output.send(response);
 
         } while (currentCommand.getType() != CommandType.LOG_OUT);
     }

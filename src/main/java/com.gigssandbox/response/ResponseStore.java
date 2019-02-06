@@ -1,5 +1,6 @@
-package com.gigssandbox.IO;
+package com.gigssandbox.response;
 
+import com.gigssandbox.exceptions.LoadingResponsePropertiesException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -12,12 +13,11 @@ public class ResponseStore {
         try {
             properties.load(new FileInputStream("src/main/resources/response.properties"));
         } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+            throw new LoadingResponsePropertiesException();
         }
     }
 
-    public String stored(String propertyName) {
+    public String getStored(String propertyName) {
         return properties.getProperty(propertyName);
     }
 }

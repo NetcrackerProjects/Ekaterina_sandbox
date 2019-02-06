@@ -13,11 +13,11 @@ public class InputTest {
 
         Input input = new Input() {
             @Override
-            public String[] parametersForCommand() {
+            public String[] receive() {
                 return splitted(parametersInSolidString);
             }
         };
-        String[] actualArrayOfStrings = input.parametersForCommand();
+        String[] actualArrayOfStrings = input.receive();
 
         assertArrayEquals(expectedArrayOfStrings, actualArrayOfStrings);
     }

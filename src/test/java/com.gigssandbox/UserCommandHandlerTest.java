@@ -4,9 +4,12 @@ import com.gigssandbox.command.Command;
 import com.gigssandbox.command.CommandType;
 import com.gigssandbox.entities.Community;
 import com.gigssandbox.entities.User;
+import com.gigssandbox.services.CommunityService;
+import com.gigssandbox.services.UserService;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +36,7 @@ public class UserCommandHandlerTest {
     public void shouldReturnRegistrationSuccessResultWhenLastCommandWasRegistration() {
         Result expectedResult = Result.REGISTRATION_SUCCESS;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.REGISTER, Map.of("username", "dark", "password", "skies")));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.REGISTER, List.of("dark", "skies")));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -47,7 +50,7 @@ public class UserCommandHandlerTest {
         users.put(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build());
         Whitebox.setInternalState(userService, "users", users);
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, Map.of("username", username, "password", String.valueOf(password))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, String.valueOf(password))));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -58,7 +61,7 @@ public class UserCommandHandlerTest {
         char[] password = "youth".toCharArray();
         Result expectedResult = Result.NOT_REGISTERED;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, Map.of("username", username, "password", String.valueOf(password))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, String.valueOf(password))));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -71,7 +74,7 @@ public class UserCommandHandlerTest {
         Whitebox.setInternalState(userService, "users", Map.of(username, User.builder().username(username).passwordHash(correctPasswordHash).build()));
         Result expectedResult = Result.INCORRECT_PASSWORD;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, Map.of("username", username, "password", String.valueOf(incorrectPassword))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, String.valueOf(incorrectPassword))));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -84,7 +87,7 @@ public class UserCommandHandlerTest {
         communities.put(communityName, Community.builder().name(communityName).members(new HashSet<>()).build());
         Whitebox.setInternalState(communityService, "communities", communities);
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_COMMUNITY, Map.of("community_name", communityName)));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_COMMUNITY, Collections.singletonList(communityName)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -93,7 +96,7 @@ public class UserCommandHandlerTest {
     public void shouldReturnLeaveCommunitySuccessResultWhenLastCommandWasLeaveCommunity() {
         Result expectedResult = Result.LEAVE_COMMUNITY_SUCCESS;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_COMMUNITY, Collections.emptyMap()));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_COMMUNITY, Collections.emptyList()));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -104,7 +107,7 @@ public class UserCommandHandlerTest {
         Whitebox.setInternalState(userCommandHandler, "username", "Carrot");
         Whitebox.setInternalState(userService, "users", Collections.singletonMap("Carrot", Mockito.mock(User.class)));
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_OUT, Collections.emptyMap()));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_OUT, Collections.emptyList()));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -113,7 +116,7 @@ public class UserCommandHandlerTest {
     public void shouldReturnUnsupportedResultWhenEnteredCommandIsUnsupported() {
         Result expectedResult = Result.UNSUPPORTED;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.UNSUPPORTED, Collections.emptyMap()));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.UNSUPPORTED, Collections.emptyList()));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -122,7 +125,7 @@ public class UserCommandHandlerTest {
     public void shouldReturnHelpResultWhenUserHasEnteredHelpCommand() {
         Result expectedResult = Result.HELP;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.HELP, Collections.emptyMap()));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.HELP, Collections.emptyList()));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -131,7 +134,7 @@ public class UserCommandHandlerTest {
     public void shouldReturnNotEnoughParametersResultWhenInputContainsNotAllParameters() {
         Result expectedResult = Result.NOT_ENOUGH_PARAMETERS;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.NOT_ENOUGH_PARAMETERS, Collections.emptyMap()));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.NOT_ENOUGH_PARAMETERS, Collections.emptyList()));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -143,7 +146,7 @@ public class UserCommandHandlerTest {
         Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).loggedIn(true).build()));
         Result expectredResult = Result.ALREADY_LOGGED_IN;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, Map.of("username", username, "password", String.valueOf(password))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, String.valueOf(password))));
 
         assertEquals(expectredResult, actualResult);
     }
@@ -155,7 +158,7 @@ public class UserCommandHandlerTest {
         Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build()));
         Result expectedResult = Result.ALREADY_REGISTERED;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.REGISTER, Map.of("username", username, "password", String.valueOf(password))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, String.valueOf(password))));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -166,7 +169,7 @@ public class UserCommandHandlerTest {
         Whitebox.setInternalState(userService, "users", Collections.emptyMap());
         Result expectedResult = Result.NOT_REGISTERED;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_OUT, Collections.emptyMap()));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_OUT, Collections.emptyList()));
 
         assertEquals(expectedResult, actualResult);
     }

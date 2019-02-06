@@ -6,7 +6,8 @@ import com.gigssandbox.exceptions.AlreadyRegisteredException;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
 import com.gigssandbox.exceptions.NotRegisteredException;
 
-import java.util.Map;
+import com.gigssandbox.services.CommunityService;
+import com.gigssandbox.services.UserService;
 
 class UserCommandHandler {
     private UserService userService;
@@ -19,14 +20,13 @@ class UserCommandHandler {
     }
 
     Result process(Command command) {
-        Map<String, String> parameters = command.getParameters();
         switch (command.getType()) {
             case REGISTER:
-                return registerUser(parameters.get("username"), parameters.get("password").toCharArray());
+                return registerUser(command.nextParameter(), command.nextParameter().toCharArray());
             case LOG_IN:
-                return logUserIn(parameters.get("username"), parameters.get("password").toCharArray());
+                return logUserIn(command.nextParameter(), command.nextParameter().toCharArray());
             case JOIN_COMMUNITY:
-                return addUserToCommunity(parameters.get("community_name"));
+                return addUserToCommunity(command.nextParameter());
             case LEAVE_COMMUNITY:
                 return removeUserFromCommunity();
             case HELP:

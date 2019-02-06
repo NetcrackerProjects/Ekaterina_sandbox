@@ -11,7 +11,7 @@ public class ConsoleInput implements Input {
         this.in = new Scanner(System.in);
     }
 
-    public String[] parametersForCommand() {
+    public String[] receive() {
         return splitted(in.nextLine());
     }
 }

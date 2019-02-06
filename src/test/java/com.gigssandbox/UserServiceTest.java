@@ -5,6 +5,7 @@ import com.gigssandbox.exceptions.AlreadyLoggedInException;
 import com.gigssandbox.exceptions.AlreadyRegisteredException;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
 import com.gigssandbox.exceptions.NotRegisteredException;
+import com.gigssandbox.services.UserService;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.gigssandbox;
+package com.gigssandbox.response;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Getter;
 public class Response {
     private String property;
 
-    Response(String property) {
+    public Response(String property) {
         this.property = property;
     }
 }

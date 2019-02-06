@@ -1,17 +1,20 @@
 package com.gigssandbox;
 
-import org.junit.Assert;
+import com.gigssandbox.response.Response;
+import com.gigssandbox.response.ResponseFactory;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ResponseFactoryTest {
     @Test
-    public void shouldCreateHelpResponseWhenHelpResultIsPassed() {
-        Result givenResult = Result.HELP;
-        Response expectedResponse = new Response("help");
+    public void shouldCreateRegistrationResponseWhenRegistrationResultIsPassed() {
+        Result givenResult = Result.REGISTRATION_SUCCESS;
+        Response expectedResponse = new Response("You have successfully registered");
 
-        Response actualResponse = ResponseFactory.createResponseFrom(givenResult);
+        Response actualResponse = ResponseFactory.create(givenResult);
 
-        Assert.assertEquals(expectedResponse, actualResponse);
+        assertEquals(expectedResponse, actualResponse);
     }
 
 }
