@@ -10,7 +10,7 @@ public class ResponseStoreTest {
     public void shouldGetTestPropertyWhenUserAskedForTestValue() {
         String expectedPropertyContent = "This is test";
 
-        String actualPropertyContent = new ResponseStore().getStored("test");
+        String actualPropertyContent = new ResponseStore().loadText("test");
 
         assertEquals(expectedPropertyContent, actualPropertyContent);
     }

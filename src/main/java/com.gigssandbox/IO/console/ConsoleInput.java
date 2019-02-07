@@ -12,6 +12,10 @@ public class ConsoleInput implements Input {
     }
 
     public String[] receive() {
-        return splitted(in.nextLine());
+        return split(in.nextLine());
+    }
+
+    private String[] split(String string) {
+        return string.trim().split("\\s+");
     }
 }

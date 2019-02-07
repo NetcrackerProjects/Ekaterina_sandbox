@@ -29,9 +29,9 @@ class UserCommandHandler {
     Result process(Command command) {
         switch (command.getType()) {
             case REGISTER:
-                return registerUser(command.nextParameter(), command.nextParameter().toCharArray());
+                return registerUser(command.nextParameter(), command.nextParameter());
             case LOG_IN:
-                return logUserIn(command.nextParameter(), command.nextParameter().toCharArray());
+                return logUserIn(command.nextParameter(), command.nextParameter());
             case JOIN_COMMUNITY:
                 return addUserToCommunity(command.nextParameter());
             case LEAVE_COMMUNITY:
@@ -51,7 +51,7 @@ class UserCommandHandler {
         }
     }
 
-    private Result registerUser(String username, char[] password) {
+    private Result registerUser(String username, String password) {
         this.username = username;
 
         try {
@@ -64,7 +64,7 @@ class UserCommandHandler {
         }
     }
 
-    private Result logUserIn(String username, char[] password) {
+    private Result logUserIn(String username, String password) {
         this.username = username;
 
         try {

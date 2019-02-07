@@ -67,8 +67,9 @@ public class CommandFactoryTest {
 
     @Test
     public void shouldReturnNotEnoughParametersCommandWhenArrayContainsNotEnoughParameters() {
-        String[] notEnoughParametersArray = new String[] {"log_in", "Shamil"};
-        Command expectedCommand = new Command(CommandType.NOT_ENOUGH_PARAMETERS, Collections.emptyList());
+        String username = "Shamil";
+        String[] notEnoughParametersArray = new String[] {"log_in", username};
+        Command expectedCommand = new Command(CommandType.NOT_ENOUGH_PARAMETERS, Collections.singletonList(username));
 
         Command actualCommand = CommandFactory.create(notEnoughParametersArray);
 

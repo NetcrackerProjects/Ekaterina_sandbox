@@ -17,7 +17,7 @@ public class ResponseStore {
         }
     }
 
-    public String getStored(String propertyName) {
+    public String loadText(String propertyName) {
         return properties.getProperty(propertyName);
     }
 }

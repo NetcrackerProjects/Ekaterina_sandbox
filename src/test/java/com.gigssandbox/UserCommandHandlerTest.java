@@ -8,14 +8,19 @@ import com.gigssandbox.entities.User;
 import com.gigssandbox.services.CommunityService;
 import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,13 +57,13 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnLoginSuccessResultWhenLastCommandWasLogIn() {
         String username = "nihilist";
-        char[] password = "blues".toCharArray();
+        String password = "blues";
         Result expectedResult = Result.LOG_IN_SUCCESS;
         Map<String, User> users = new HashMap<>();
-        users.put(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build());
+        users.put(username, User.builder().username(username).passwordHash(password.hashCode()).build());
         Whitebox.setInternalState(userService, "users", users);
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, String.valueOf(password))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, password)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -66,10 +71,10 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnNotRegisteredResultWhenLastCommandWasLogInAndUserWasNotRegisteredYet() {
         String username = "broken";
-        char[] password = "youth".toCharArray();
+        String password = "youth";
         Result expectedResult = Result.NOT_REGISTERED;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, String.valueOf(password))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, password)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -77,12 +82,12 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnIncorrectPasswordResultWhanLastCommandWasLogInAndUserEnteredWrongAnswer() {
         String username = "motionless";
-        int correctPasswordHash = Arrays.hashCode("in white".toCharArray());
-        char[] incorrectPassword = "in black".toCharArray();
+        int correctPasswordHash = "in white".hashCode();
+        String incorrectPassword = "in black";
         Whitebox.setInternalState(userService, "users", Map.of(username, User.builder().username(username).passwordHash(correctPasswordHash).build()));
         Result expectedResult = Result.INCORRECT_PASSWORD;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, String.valueOf(incorrectPassword))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, incorrectPassword)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -150,11 +155,12 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnAlreadyLoggedInResultWhenIsLoggedInFieldIsTrue() {
         String username = "Glen";
-        char[] password = "Check".toCharArray();
-        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).loggedIn(true).build()));
+        String password = "Check";
+        User user = User.builder().username(username).passwordHash(password.hashCode()).loggedIn(true).build();
+        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, user));
         Result expectredResult = Result.ALREADY_LOGGED_IN;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, String.valueOf(password))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, password)));
 
         assertEquals(expectredResult, actualResult);
     }
@@ -162,11 +168,12 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnAlreadyRegisteredResultWhenUserIsPresentInUsersMap() {
         String username = "John";
-        char[] password = "Senya MC".toCharArray();
-        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build()));
+        String password = "Senya MC";
+        User user = User.builder().username(username).passwordHash(password.hashCode()).build();
+        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, user));
         Result expectedResult = Result.ALREADY_REGISTERED;
 
-        Result actualResult = userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, String.valueOf(password))));
+        Result actualResult = userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -223,6 +230,7 @@ public class UserCommandHandlerTest {
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_GIG, List.of(headliner, wrongGigDateText)));
 
+
         assertEquals(expectedResult, actualResult);
     }
 
@@ -244,6 +252,7 @@ public class UserCommandHandlerTest {
 
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_GIG, List.of(headliner, wrongGigDateText)));
+
 
         assertEquals(expectedResult, actualResult);
     }
@@ -267,6 +276,7 @@ public class UserCommandHandlerTest {
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_GIG, List.of(headliner, wrongGigDateText)));
 
+
         assertEquals(expectedResult, actualResult);
     }
 
@@ -284,6 +294,7 @@ public class UserCommandHandlerTest {
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_GIG, List.of(headliner, wrongGigDateText)));
 
+
         assertEquals(expectedResult, actualResult);
     }
 
@@ -298,11 +309,15 @@ public class UserCommandHandlerTest {
         Collection<User> attendees = new HashSet<>();
         attendees.add(User.builder().username(username).build());
 
+        Gig gig = Gig.builder().credentials(credentials).attendees(attendees).build();
+
         Whitebox.setInternalState(userCommandHandler, "username", username);
-        Whitebox.setInternalState(gigService, "gigs", Collections.singletonMap(credentials, Gig.builder().credentials(credentials).attendees(attendees).build()));
+        Whitebox.setInternalState(gigService, "gigs", Collections.singletonMap(credentials, gig));
         Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).build()));
 
+
         Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_GIG, List.of(headliner, gigDate)));
+
 
         assertEquals(expectedResult, actualResult);
     }
@@ -313,16 +328,20 @@ public class UserCommandHandlerTest {
         String headliner = "adept";
         String gigDate = "2013-99-21";
         Result expectedResult = Result.INCORRECT_DATE_VALUE;
-        Gig.Credentials credentials = new Gig.Credentials(headliner, new GregorianCalendar(2013, Calendar.SEPTEMBER, 21));
+        Gig.Credentials credentials = new Gig.Credentials(headliner, new GregorianCalendar(2012, Calendar.OCTOBER, 12));
 
         Collection<User> attendees = new HashSet<>();
         attendees.add(User.builder().username(username).build());
 
+        Gig gig = Gig.builder().credentials(credentials).attendees(attendees).build();
+
         Whitebox.setInternalState(userCommandHandler, "username", username);
-        Whitebox.setInternalState(gigService, "gigs", Collections.singletonMap(credentials, Gig.builder().credentials(credentials).attendees(attendees).build()));
+        Whitebox.setInternalState(gigService, "gigs", Collections.singletonMap(credentials, gig));
         Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).build()));
 
+
         Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_GIG, List.of(headliner, gigDate)));
+
 
         assertEquals(expectedResult, actualResult);
     }
@@ -333,16 +352,20 @@ public class UserCommandHandlerTest {
         String headliner = "woe, is me";
         String gigDate = "2013-a1-11";
         Result expectedResult = Result.INCORRECT_DATE_FORMAT;
-        Gig.Credentials credentials = new Gig.Credentials(headliner, new GregorianCalendar(2013, Calendar.JANUARY, 11));
+        Gig.Credentials credentials = new Gig.Credentials(headliner, new GregorianCalendar(2012, Calendar.OCTOBER, 12));
 
         Collection<User> attendees = new HashSet<>();
         attendees.add(User.builder().username(username).build());
 
+        Gig gig = Gig.builder().credentials(credentials).attendees(attendees).build();
+
         Whitebox.setInternalState(userCommandHandler, "username", username);
-        Whitebox.setInternalState(gigService, "gigs", Collections.singletonMap(credentials, Gig.builder().credentials(credentials).attendees(attendees).build()));
+        Whitebox.setInternalState(gigService, "gigs", Collections.singletonMap(credentials, gig));
         Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).build()));
 
+
         Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_GIG, List.of(headliner, gigDate)));
+
 
         assertEquals(expectedResult, actualResult);
     }
@@ -360,6 +383,7 @@ public class UserCommandHandlerTest {
 
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_GIG, List.of(headliner, wrongGigDateText)));
+
 
         assertEquals(expectedResult, actualResult);
     }

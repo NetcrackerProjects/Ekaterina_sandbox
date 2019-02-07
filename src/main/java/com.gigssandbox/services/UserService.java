@@ -6,7 +6,6 @@ import com.gigssandbox.exceptions.AlreadyRegisteredException;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
 import com.gigssandbox.exceptions.NotRegisteredException;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,21 +16,27 @@ public class UserService {
         this.users = new HashMap<>();
     }
 
-    public void registerUser(String username, char[] password) throws AlreadyRegisteredException {
+    public void registerUser(String username, String password) throws AlreadyRegisteredException {
         if (users.containsKey(username)) {
             throw new AlreadyRegisteredException();
         }
-        users.put(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).loggedIn(true).build());
+
+        User user = User.builder()
+                .username(username)
+                .passwordHash(password.hashCode())
+                .loggedIn(true).build();
+
+        users.put(username, user);
     }
 
-    public void logUserIn(String username, char[] password) throws NotRegisteredException, IncorrectPasswordException, AlreadyLoggedInException {
+    public void logUserIn(String username, String password) throws NotRegisteredException, IncorrectPasswordException, AlreadyLoggedInException {
         if (!users.containsKey(username)) {
             throw new NotRegisteredException();
 
-        } else if (users.get(username).getPasswordHash() != Arrays.hashCode(password)) {
+        } else if (users.get(username).getPasswordHash() != password.hashCode()) {
             throw new IncorrectPasswordException();
 
-        } else if(users.get(username).isLoggedIn()) {
+        } else if (users.get(username).isLoggedIn()) {
             throw new AlreadyLoggedInException();
         }
 

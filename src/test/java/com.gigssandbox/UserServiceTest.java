@@ -29,7 +29,7 @@ public class UserServiceTest {
     @Test
     public void shoudAddUserToUsersCollectionWhenUserTriesToRegister() {
         String username = "oliver_sykes";
-        char[] password = "poprockisthebest".toCharArray();
+        String password = "poprockisthebest";
 
         assertDoesNotThrow(() -> userService.registerUser(username, password));
 
@@ -39,8 +39,8 @@ public class UserServiceTest {
     @Test
     public void shouldThrowAlreadyRegisteredExceptionWhenUserCredentialsAreAlreadyPresentInUsersMap() {
         String username = "skip";
-        char[] password = "the foreplay".toCharArray();
-        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build()));
+        String password = "the foreplay";
+        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(password.hashCode()).build()));
 
         assertThrows(AlreadyRegisteredException.class, () -> userService.registerUser(username, password));
     }
@@ -48,7 +48,7 @@ public class UserServiceTest {
     @Test
     public void shouldThrowUserNotRegisteredExceptionWhenUserCredentialsAreNotPresentInUsersMap() {
         String username = "ben_bruice";
-        char[] password = "everyday00playing00zeros".toCharArray();
+        String password = "everyday00playing00zeros";
 
         assertThrows(NotRegisteredException.class, () -> userService.logUserIn(username, password));
     }
@@ -56,10 +56,10 @@ public class UserServiceTest {
     @Test
     public void shouldThrowIncorrectPasswordExceptionWhenUserPassedIncorrectPassword() {
         String username = "Winnie";
-        char[] password = "The Pooh".toCharArray();
-        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build()));
+        String password = "The Pooh";
+        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(password.hashCode()).build()));
 
-        char[] incorrectPassword = "Pooh".toCharArray();
+        String incorrectPassword = "Pooh";
 
         assertThrows(IncorrectPasswordException.class, () -> userService.logUserIn(username, incorrectPassword));
     }
@@ -67,8 +67,8 @@ public class UserServiceTest {
     @Test
     public void shouldThrowAlreadyLoggedInExceptionWHenUsersLoggedInFieldIsTrue() {
         String username = "Adept";
-        char[] password = "Ivory Tower".toCharArray();
-        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).loggedIn(true).build()));
+        String password = "Ivory Tower";
+        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(password.hashCode()).loggedIn(true).build()));
 
         assertThrows(AlreadyLoggedInException.class, () -> userService.logUserIn(username, password));
     }
@@ -76,8 +76,8 @@ public class UserServiceTest {
     @Test
     public void shouldNotThrowAnyExceptionIfUserLoginAndPasswordAreCorrectAndPresentInSystem() {
         String username = "Winnie";
-        char[] password = "The Pooh".toCharArray();
-        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(Arrays.hashCode(password)).build()));
+        String password = "The Pooh";
+        Whitebox.setInternalState(userService, "users", Collections.singletonMap(username, User.builder().username(username).passwordHash(password.hashCode()).build()));
 
         assertDoesNotThrow(() -> userService.logUserIn(username, password));
     }

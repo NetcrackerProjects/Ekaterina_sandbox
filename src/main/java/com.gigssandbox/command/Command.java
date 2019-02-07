@@ -6,9 +6,11 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @EqualsAndHashCode
+@ToString
 public class Command {
     private final CommandType type;
     private final List<String> parameters;
