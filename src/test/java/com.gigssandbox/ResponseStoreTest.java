@@ -1,8 +1,9 @@
 package com.gigssandbox;
 
 import com.gigssandbox.response.ResponseStore;
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ResponseStoreTest {
     @Test
@@ -11,6 +12,6 @@ public class ResponseStoreTest {
 
         String actualPropertyContent = new ResponseStore().getStored("test");
 
-        Assert.assertEquals(expectedPropertyContent, actualPropertyContent);
+        assertEquals(expectedPropertyContent, actualPropertyContent);
     }
 }

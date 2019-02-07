@@ -4,6 +4,6 @@ public interface Input {
     String[] receive();
 
     default String[] splitted(String string) {
-        return string.trim().split(" ");
+        return string.trim().split("\\s+");
     }
 }

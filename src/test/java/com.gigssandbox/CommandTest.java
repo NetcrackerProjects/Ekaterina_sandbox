@@ -4,11 +4,11 @@ import com.gigssandbox.command.Command;
 import com.gigssandbox.command.CommandType;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
 import org.junit.Test;
 
-public class CommandTest {
+import static org.junit.Assert.assertEquals;
 
+public class CommandTest {
     @Test
     public void shouldGetUsernameFromParametersWhenMethodIsCalledForTheFirstTime() {
         String expectedFirstParameter = "interesting_username";
@@ -19,6 +19,6 @@ public class CommandTest {
 
         String actualFirstParameter = loginCommand.nextParameter();
 
-        Assert.assertEquals(expectedFirstParameter, actualFirstParameter);
+        assertEquals(expectedFirstParameter, actualFirstParameter);
     }
 }

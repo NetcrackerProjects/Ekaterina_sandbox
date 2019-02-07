@@ -1,38 +1,58 @@
 package com.gigssandbox.entities;
 
+import java.util.Calendar;
+import java.util.HashSet;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 @EqualsAndHashCode
 @Builder(toBuilder = true)
 @Getter
+@AllArgsConstructor
 public class Gig {
     private int id;
-    private Band headlinerBand;
+    private Credentials credentials;
     private Band supportBand;
-    private LocalDateTime date;
     private String location;
-    private Collection<User> attendedUsers;
-    private Collection<Community> attendedCommunities;
+    private Collection<User> attendees;
 
-    void addAttendee(User user) {
-        attendedUsers.add(user);
+    public Gig() {
+        this.attendees = new HashSet<>();
     }
 
-    void removeAttendee(User user) {
-        attendedUsers.remove(user);
+    public void add(User attendee) {
+        attendees.add(attendee);
+    }
+
+    public void remove(User attendee) {
+        attendees.remove(attendee);
+    }
+
+    public boolean contains(User attendee) {
+        return attendees.contains(attendee);
     }
 
     @Override
     public String toString() {
-        return " headlinerBandId: " + headlinerBand.getName() +
+        return " headlinerBandId: " + credentials.getHeadliner() +
                 " \n\tsupportBandId: " + supportBand.getName() +
-                " \n\tdate: " + date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) +
+                " \n\tdate: " + credentials.getGigDate() +
                 " \n\tlocation: " + location;
+    }
+
+    @EqualsAndHashCode
+    @Getter
+    public static class Credentials {
+        private String headliner;
+        private Calendar gigDate;
+
+        public Credentials(String headliner, Calendar gigDate) {
+            this.headliner = headliner;
+            this.gigDate = gigDate;
+        }
     }
 }

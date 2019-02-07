@@ -3,20 +3,27 @@ package com.gigssandbox;
 import com.gigssandbox.command.Command;
 import com.gigssandbox.exceptions.AlreadyLoggedInException;
 import com.gigssandbox.exceptions.AlreadyRegisteredException;
+import com.gigssandbox.exceptions.DateParsingException;
+import com.gigssandbox.exceptions.IncorrectDateValueException;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
+import com.gigssandbox.exceptions.NoAppropriateGigsException;
 import com.gigssandbox.exceptions.NotRegisteredException;
 
 import com.gigssandbox.services.CommunityService;
+import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
+import java.util.Calendar;
 
 class UserCommandHandler {
     private UserService userService;
     private CommunityService communityService;
+    private GigService gigService;
     private String username;
 
-    UserCommandHandler(UserService userService, CommunityService communityService) {
+    UserCommandHandler(UserService userService, CommunityService communityService, GigService gigService) {
         this.userService = userService;
         this.communityService = communityService;
+        this.gigService = gigService;
     }
 
     Result process(Command command) {
@@ -33,6 +40,10 @@ class UserCommandHandler {
                 return Result.HELP;
             case LOG_OUT:
                 return logUserOut();
+            case JOIN_GIG:
+                return joinGig(command.nextParameter(), command.nextParameter());
+            case LEAVE_GIG:
+                return leaveGig(command.nextParameter(), command.nextParameter());
             case NOT_ENOUGH_PARAMETERS:
                 return Result.NOT_ENOUGH_PARAMETERS;
             default:
@@ -88,6 +99,40 @@ class UserCommandHandler {
 
         } catch (NotRegisteredException e) {
             return Result.NOT_REGISTERED;
+        }
+    }
+
+    private Result joinGig(String headliner, String gigDateText) {
+        try {
+            Calendar gigDate = new StringToCalendarParser().parse(gigDateText);
+            gigService.addUserToGig(userService.getUser(username), headliner, gigDate);
+            return Result.JOIN_GIG_SUCCESS;
+
+        } catch (DateParsingException e) {
+            return Result.INCORRECT_DATE_FORMAT;
+
+        }  catch (IncorrectDateValueException e) {
+            return Result.INCORRECT_DATE_VALUE;
+
+        }  catch (NoAppropriateGigsException e) {
+            return Result.NO_APPROPRIATE_GIGS;
+        }
+    }
+
+    private Result leaveGig(String headliner, String gigDateText) {
+        try {
+            Calendar gigDate = new StringToCalendarParser().parse(gigDateText);
+            gigService.removeUserFromGig(userService.getUser(username), headliner, gigDate);
+            return Result.LEAVE_GIG_SUCCESS;
+
+        } catch (DateParsingException e) {
+            return Result.INCORRECT_DATE_FORMAT;
+
+        } catch (IncorrectDateValueException e) {
+            return Result.INCORRECT_DATE_VALUE;
+
+        } catch (NoAppropriateGigsException e) {
+            return Result.NO_APPROPRIATE_GIGS;
         }
     }
 }

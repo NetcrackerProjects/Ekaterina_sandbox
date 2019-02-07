@@ -23,6 +23,8 @@ public class CommandFactory {
         switch (currentType) {
             case LOG_IN:
             case REGISTER:
+            case JOIN_GIG:
+            case LEAVE_GIG:
                 parameters.add(strings[1]);
                 parameters.add(strings[2]);
                 break;

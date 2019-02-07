@@ -1,9 +1,10 @@
 package com.gigssandbox;
 
 import com.gigssandbox.entities.User;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class UserTest {
     private User user;
@@ -20,6 +21,6 @@ public class UserTest {
 
         boolean actualValue = user.isLoggedIn();
 
-        Assert.assertEquals(expectedValue, actualValue);
+        assertEquals(expectedValue, actualValue);
     }
 }

@@ -10,6 +10,7 @@ import com.gigssandbox.command.CommandType;
 import com.gigssandbox.response.Response;
 import com.gigssandbox.response.ResponseFactory;
 import com.gigssandbox.services.CommunityService;
+import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
 
 class UserActivity {
@@ -17,15 +18,15 @@ class UserActivity {
     private final Output output;
     private final UserCommandHandler userCommandHandler;
 
-    UserActivity(UserService userService, CommunityService communityService) {
+    UserActivity(UserService userService, CommunityService communityService, GigService gigService) {
         this.input = new ConsoleInput();
         this.output = new ConsoleOutput();
-        this.userCommandHandler = new UserCommandHandler(userService, communityService);
+        this.userCommandHandler = new UserCommandHandler(userService, communityService, gigService);
     }
 
     void start() {
-
         Command currentCommand;
+
         do {
             currentCommand = CommandFactory.create((input.receive()));
 
