@@ -3,13 +3,13 @@ package com.gigssandbox.response;
 import com.gigssandbox.Result;
 
 public class ResponseFactory {
-    private static final ResponseStore responseStore = new ResponseStore();
+    private final ResponseStore responseStore;
 
-    private ResponseFactory() {
-
+    public ResponseFactory() {
+        this.responseStore = new ResponseStore();
     }
 
-    public static Response create(Result result) {
+    public Response create(Result result) {
         return new Response(responseStore.loadText(result.name().toLowerCase()));
     }
 }

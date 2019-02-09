@@ -21,7 +21,7 @@ public class Community {
     private Collection<User> members;
     private String chatroomName;
 
-    public Community() {
+    Community() {
         this.vizitedGigs = new HashSet<>();
         this.members = new HashSet<>();
     }

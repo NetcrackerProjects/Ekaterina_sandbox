@@ -1,4 +1,4 @@
-package com.gigssandbox.IO;
+package com.gigssandbox.io;
 
 public interface Input {
     String[] receive();

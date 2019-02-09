@@ -21,21 +21,9 @@ public class User {
     private String username;
     private int passwordHash;
     private boolean loggedIn;
-    private PersonalInfo personalInfo;
     private Collection<Gig> vizitedGigs;
     private int rating;
     private LocalDateTime registrationDate;
     private boolean isAdmin;
     private boolean isCommunityAdmin;
-
-    @Override
-    public String toString() {
-        return "User: " +
-                "\n\tname: " + personalInfo.getName() +
-                "\n\tsurname: " + personalInfo.getSurname() +
-                "\n\tusername: " + username +
-                "\n\tage: " + personalInfo.getAge() +
-                "\n\tgender: " + personalInfo.getGender() +
-                "\n\trating: " + rating;
-    }
 }

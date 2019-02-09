@@ -1,6 +1,6 @@
-package com.gigssandbox.IO.console;
+package com.gigssandbox.io.console;
 
-import com.gigssandbox.IO.Output;
+import com.gigssandbox.io.Output;
 
 import com.gigssandbox.response.Response;
 

@@ -1,7 +1,5 @@
-package com.gigssandbox;
+package com.gigssandbox.command;
 
-import com.gigssandbox.command.Command;
-import com.gigssandbox.command.CommandType;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;

@@ -1,6 +1,6 @@
-package com.gigssandbox;
+package com.gigssandbox.io.console;
 
-import com.gigssandbox.IO.console.ConsoleOutput;
+import com.gigssandbox.Result;
 import com.gigssandbox.response.Response;
 import com.gigssandbox.response.ResponseFactory;
 import org.junit.After;
@@ -16,19 +16,21 @@ public class ConsoleOutputTest {
     private ConsoleOutput consoleOutput;
     private ByteArrayOutputStream output;
     private PrintStream oldOutput;
+    private ResponseFactory responseFactory;
 
     @Before
     public void setUp() {
         this.oldOutput = System.out;
         this.output = new ByteArrayOutputStream();
         this.consoleOutput = new ConsoleOutput();
+        this.responseFactory = new ResponseFactory();
         System.setOut(new PrintStream(output));
     }
 
     @Test
-    public void shouldWriteRegistrationSuccessResponseValueWhenRegistrationCommandIsPassed() {
+    public void shouldWriteRegistrationSuccessTextWhenRegistrationCommandIsPassed() {
         String expectedOutput = "You have successfully registered\n";
-        Response response = ResponseFactory.create(Result.REGISTRATION_SUCCESS);
+        Response response = responseFactory.create(Result.REGISTRATION_SUCCESS);
 
         consoleOutput.send(response);
 

@@ -1,7 +1,5 @@
-package com.gigssandbox;
+package com.gigssandbox.entities;
 
-import com.gigssandbox.entities.Community;
-import com.gigssandbox.entities.User;
 import java.util.Collection;
 import java.util.HashSet;
 import org.junit.Before;
@@ -13,16 +11,19 @@ import static org.junit.Assert.assertTrue;
 
 public class CommunityTest {
     private Community community;
+    private User user;
 
     @Before
     public void setUp() {
         this.community = new Community();
+        this.user = User
+                .builder()
+                .username("hologram")
+                .build();
     }
 
     @Test
     public void shouldAddUserToChosenCommunityWhenUserWantsToJoinSpecificCommunity() {
-        User user = User.builder().username("hologram").build();
-
         community.add(user);
 
         assertTrue(community.getMembers().contains(user));
@@ -30,7 +31,6 @@ public class CommunityTest {
 
     @Test
     public void shouldRemoveUserFromCommunityWhenUserWantsToLeaveCommunity() {
-        User user = User.builder().username("leech").build();
         Collection<User> members = new HashSet<>();
         members.add(user);
         Whitebox.setInternalState(community, "members", members);

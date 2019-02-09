@@ -6,24 +6,28 @@ import com.gigssandbox.exceptions.AlreadyRegisteredException;
 import com.gigssandbox.exceptions.DateParsingException;
 import com.gigssandbox.exceptions.IncorrectDateValueException;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
-import com.gigssandbox.exceptions.NoAppropriateGigsException;
+import com.gigssandbox.exceptions.NoAppropriateCommunityException;
+import com.gigssandbox.exceptions.NoAppropriateGigException;
 import com.gigssandbox.exceptions.NotRegisteredException;
 
 import com.gigssandbox.services.CommunityService;
 import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
-import java.util.Calendar;
 
 class UserCommandHandler {
     private UserService userService;
     private CommunityService communityService;
     private GigService gigService;
     private String username;
+    private CalendarValidator calendarValidator;
+    private GigCredentialsConverter gigCredentialsConverter;
 
     UserCommandHandler(UserService userService, CommunityService communityService, GigService gigService) {
         this.userService = userService;
         this.communityService = communityService;
         this.gigService = gigService;
+        this.calendarValidator = new CalendarValidator();
+        this.gigCredentialsConverter = new GigCredentialsConverter();
     }
 
     Result process(Command command) {
@@ -83,8 +87,13 @@ class UserCommandHandler {
     }
 
     private Result addUserToCommunity(String communityName) {
-        communityService.addUserToCommunity(userService.getUser(username), communityName);
-        return Result.JOIN_COMMUNITY_SUCCESS;
+        try {
+            communityService.addUserToCommunity(userService.getUser(username), communityName);
+            return Result.JOIN_COMMUNITY_SUCCESS;
+
+        } catch (NoAppropriateCommunityException e) {
+            return Result.NO_APPROPRIATE_COMMUNITY;
+        }
     }
 
     private Result removeUserFromCommunity() {
@@ -104,8 +113,11 @@ class UserCommandHandler {
 
     private Result joinGig(String headliner, String gigDateText) {
         try {
-            Calendar gigDate = new StringToCalendarParser().parse(gigDateText);
-            gigService.addUserToGig(userService.getUser(username), headliner, gigDate);
+            calendarValidator.validate(gigDateText);
+
+            String gigCredentials = gigCredentialsConverter.create(headliner, gigDateText);
+
+            gigService.addUserToGig(userService.getUser(username), gigCredentials);
             return Result.JOIN_GIG_SUCCESS;
 
         } catch (DateParsingException e) {
@@ -114,15 +126,15 @@ class UserCommandHandler {
         }  catch (IncorrectDateValueException e) {
             return Result.INCORRECT_DATE_VALUE;
 
-        }  catch (NoAppropriateGigsException e) {
-            return Result.NO_APPROPRIATE_GIGS;
+        }  catch (NoAppropriateGigException e) {
+            return Result.NO_APPROPRIATE_GIG;
         }
     }
 
     private Result leaveGig(String headliner, String gigDateText) {
         try {
-            Calendar gigDate = new StringToCalendarParser().parse(gigDateText);
-            gigService.removeUserFromGig(userService.getUser(username), headliner, gigDate);
+            calendarValidator.validate(gigDateText);
+            gigService.removeUserFromGig(userService.getUser(username), gigCredentialsConverter.create(headliner, gigDateText));
             return Result.LEAVE_GIG_SUCCESS;
 
         } catch (DateParsingException e) {
@@ -131,8 +143,8 @@ class UserCommandHandler {
         } catch (IncorrectDateValueException e) {
             return Result.INCORRECT_DATE_VALUE;
 
-        } catch (NoAppropriateGigsException e) {
-            return Result.NO_APPROPRIATE_GIGS;
+        } catch (NoAppropriateGigException e) {
+            return Result.NO_APPROPRIATE_GIG;
         }
     }
 }

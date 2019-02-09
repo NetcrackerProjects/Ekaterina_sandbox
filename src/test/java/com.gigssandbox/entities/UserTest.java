@@ -1,6 +1,5 @@
-package com.gigssandbox;
+package com.gigssandbox.entities;
 
-import com.gigssandbox.entities.User;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +10,10 @@ public class UserTest {
 
     @Before
     public void setUp() {
-        this.user = User.builder().username("Hedgehog").build();
+        this.user = User
+                .builder()
+                .username("Hedgehog")
+                .build();
     }
 
     @Test

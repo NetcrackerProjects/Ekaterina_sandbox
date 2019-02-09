@@ -5,10 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class ResponseStore {
+class ResponseStore {
     private final Properties properties;
 
-    public ResponseStore() {
+    ResponseStore() {
         properties = new Properties();
         try {
             properties.load(new FileInputStream("src/main/resources/response.properties"));
@@ -17,7 +17,7 @@ public class ResponseStore {
         }
     }
 
-    public String loadText(String propertyName) {
+    String loadText(String propertyName) {
         return properties.getProperty(propertyName);
     }
 }

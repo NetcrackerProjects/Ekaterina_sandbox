@@ -3,16 +3,16 @@ package com.gigssandbox.services;
 import com.gigssandbox.entities.Community;
 import com.gigssandbox.entities.User;
 
+import com.gigssandbox.exceptions.NoAppropriateCommunityException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class CommunityService {
-    private final Map<String, Community> communities;
     private static final String DEFAULT_COMMUNITY = "default_community";
+    private final Map<String, Community> communities;
 
-    public CommunityService() {
-        this.communities = new HashMap<>();
+    public CommunityService(Map<String, Community> communities) {
+        this.communities = communities;
         communities.put(DEFAULT_COMMUNITY, Community.builder()
                 .id(0)
                 .name(DEFAULT_COMMUNITY)
@@ -21,10 +21,15 @@ public class CommunityService {
     }
 
     public void addUserToDefaultCommunity(User user) {
-        addUserToCommunity(user, DEFAULT_COMMUNITY);
+        communities.get(DEFAULT_COMMUNITY).add(user);
     }
 
-    public void addUserToCommunity(User user, String communityName) {
+
+    public void addUserToCommunity(User user, String communityName) throws NoAppropriateCommunityException {
+        if(!communities.containsKey(communityName)) {
+            throw new NoAppropriateCommunityException();
+        }
+
         communities.get(communityName).add(user);
     }
 
@@ -37,7 +42,7 @@ public class CommunityService {
         communities.get(communityName).remove(user);
     }
 
-    public boolean communityContainsUser(String communityName, User user) {
+    boolean communityContainsUser(String communityName, User user) {
         return communities.get(communityName).getMembers().contains(user);
     }
 }

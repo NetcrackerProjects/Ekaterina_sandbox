@@ -1,40 +1,42 @@
-package com.gigssandbox;
+package com.gigssandbox.entities;
 
-import com.gigssandbox.entities.Gig;
-import com.gigssandbox.entities.User;
 import java.util.Collection;
 import java.util.HashSet;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class GigTest {
     private Gig gig;
+    private User user;
 
     @Before
     public void setUp() {
         this.gig = new Gig();
+        this.user = User
+                .builder()
+                .username("windvent")
+                .build();
     }
 
     @Test
     public void shouldAddUserToGigWhenUserWantsToAttendGig() {
-        User user = User.builder().username("windvent").build();
-
         gig.add(user);
 
-        Assert.assertTrue(gig.getAttendees().contains(user));
+        assertTrue(gig.getAttendees().contains(user));
     }
 
     @Test
     public void shouldRemoveUserFromGigWhenUserWantsToLeaveGig() {
-        User user = User.builder().username("immortalis").build();
         Collection<User> attendees = new HashSet<>();
         attendees.add(user);
         Whitebox.setInternalState(gig, "attendees", attendees);
 
         gig.remove(user);
 
-        Assert.assertFalse(gig.getAttendees().contains(user));
+        assertFalse(gig.getAttendees().contains(user));
     }
 }

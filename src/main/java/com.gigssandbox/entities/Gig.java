@@ -15,12 +15,12 @@ import java.util.Collection;
 @AllArgsConstructor
 public class Gig {
     private int id;
-    private Credentials credentials;
-    private Band supportBand;
+    private String credentials;
+    private String support;
     private String location;
     private Collection<User> attendees;
 
-    public Gig() {
+    Gig() {
         this.attendees = new HashSet<>();
     }
 
@@ -34,25 +34,5 @@ public class Gig {
 
     public boolean contains(User attendee) {
         return attendees.contains(attendee);
-    }
-
-    @Override
-    public String toString() {
-        return " headlinerBandId: " + credentials.getHeadliner() +
-                " \n\tsupportBandId: " + supportBand.getName() +
-                " \n\tdate: " + credentials.getGigDate() +
-                " \n\tlocation: " + location;
-    }
-
-    @EqualsAndHashCode
-    @Getter
-    public static class Credentials {
-        private String headliner;
-        private Calendar gigDate;
-
-        public Credentials(String headliner, Calendar gigDate) {
-            this.headliner = headliner;
-            this.gigDate = gigDate;
-        }
     }
 }

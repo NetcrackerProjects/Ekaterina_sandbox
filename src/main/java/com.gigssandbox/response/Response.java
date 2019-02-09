@@ -8,7 +8,7 @@ import lombok.Getter;
 public class Response {
     private String property;
 
-    public Response(String property) {
+    Response(String property) {
         this.property = property;
     }
 }

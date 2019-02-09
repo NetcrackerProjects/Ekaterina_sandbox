@@ -6,14 +6,13 @@ import com.gigssandbox.exceptions.AlreadyRegisteredException;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
 import com.gigssandbox.exceptions.NotRegisteredException;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class UserService {
     private final Map<String, User> users;
 
-    public UserService() {
-        this.users = new HashMap<>();
+    public UserService(Map<String, User> users) {
+        this.users = users;
     }
 
     public void registerUser(String username, String password) throws AlreadyRegisteredException {
@@ -24,7 +23,8 @@ public class UserService {
         User user = User.builder()
                 .username(username)
                 .passwordHash(password.hashCode())
-                .loggedIn(true).build();
+                .loggedIn(true)
+                .build();
 
         users.put(username, user);
     }
@@ -54,7 +54,7 @@ public class UserService {
         return users.get(username);
     }
 
-    public boolean exists(String username) {
+    boolean exists(String username) {
         return users.containsKey(username);
     }
 }

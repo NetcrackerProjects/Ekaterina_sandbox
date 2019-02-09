@@ -5,13 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CommandFactory {
-    private static final CommandValidator validator = new CommandValidator();
+    private final CommandValidator validator;
 
-    private CommandFactory() {
-
+    public CommandFactory() {
+        this.validator = new CommandValidator();
     }
 
-    public static Command create(String... strings) {
+    public Command create(String... strings) {
         CommandType currentType;
         List<String> parameters = List.of(Arrays.stream(strings).skip(1).toArray(String[]::new));
 

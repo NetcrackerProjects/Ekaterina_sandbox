@@ -1,6 +1,5 @@
-package com.gigssandbox;
+package com.gigssandbox.io.console;
 
-import com.gigssandbox.IO.console.ConsoleInput;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
