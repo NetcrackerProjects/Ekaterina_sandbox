@@ -21,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 
 public class UserCommandHandlerTest {
     private UserCommandHandler userCommandHandler;
-    private UserService userService;
     private GigService gigService;
     private String username;
     private String password;
@@ -66,7 +65,7 @@ public class UserCommandHandlerTest {
 
         this.communities = new HashMap<>();
 
-        this.userService = new UserService(users);
+        UserService userService = new UserService(users);
         CommunityService communityService = new CommunityService(communities);
         this.gigService = new GigService(gigs);
 
@@ -84,7 +83,8 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnLoginSuccessResultWhenLastCommandWasLogIn() {
-        users.put(username, user);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
+        userCommandHandler.process(new Command(CommandType.LOG_OUT, Collections.emptyList()));
         Result expectedResult = Result.LOG_IN_SUCCESS;
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, password)));
@@ -104,7 +104,7 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnIncorrectPasswordResultWhanLastCommandWasLogInAndUserEnteredWrongPassword() {
         String incorrectPassword = "in black";
-        users.put(username, user);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
         Result expectedResult = Result.INCORRECT_PASSWORD;
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, incorrectPassword)));
@@ -114,7 +114,7 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnJoinCommunitySuccessResultWhenLastCommandWasJoinCommunity() {
-        users.put(username, user);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
         communities.put(communityName, community);
         Result expectedResult = Result.JOIN_COMMUNITY_SUCCESS;
 
@@ -135,8 +135,7 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnLogOutSuccessResultWhenLastCommandWasLogOut() {
         Result expectedResult = Result.LOG_OUT_SUCCESS;
-        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
-        users.put(username, user);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));;
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_OUT, Collections.emptyList()));
 
@@ -172,8 +171,7 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnAlreadyLoggedInResultWhenUserIsAlreadyLoggedIn() {
-        users.put(username, user);
-        user.setLoggedIn(true);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
         Result expectredResult = Result.ALREADY_LOGGED_IN;
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_IN, List.of(username, password)));
@@ -183,7 +181,7 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnAlreadyRegisteredResultWhenUserIsPresent() {
-        users.put(username, user);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
         Result expectedResult = Result.ALREADY_REGISTERED;
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
@@ -193,7 +191,7 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnNotRegisteredResultWhenUnregisteredUserTriesToLogOut() {
-        userService = new UserService(Collections.emptyMap());
+        users = Collections.emptyMap();
         Result expectedResult = Result.NOT_REGISTERED;
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_OUT, Collections.emptyList()));
@@ -237,7 +235,6 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnNoAppropriateGigsResultWhenGigForJoiningCredentialsAreNotPresent() {
         Result expectedResult = Result.NO_SUCH_GIG;
-        users.put(username, user);
         userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_GIG, List.of(headliner, gigDateText)));
@@ -286,7 +283,7 @@ public class UserCommandHandlerTest {
         String wrongDateText = "2013-10-12";
         Result expectedResult = Result.NO_SUCH_GIG;
         userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
-        gigService = new GigService(Collections.emptyMap());
+        gigs = Collections.emptyMap();
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_GIG, List.of(headliner, wrongDateText)));
 

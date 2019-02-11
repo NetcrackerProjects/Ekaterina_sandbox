@@ -5,7 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
 
 public class ConsoleInputTest {
@@ -22,10 +22,10 @@ public class ConsoleInputTest {
     @Test
     public void shouldReadTestStringAndSplitIntoStringArrayWhenStringHasDelimiters() {
         systemInMock.provideLines("Aladdin Abu Genie");
-        String[] expectedArray = new String[]{"Aladdin", "Abu", "Genie"};
+        String expectedInput = "Aladdin Abu Genie";
 
-        String[] actualArray = consoleInput.receive();
+        String actualInput = consoleInput.receive();
 
-        assertArrayEquals(expectedArray, actualArray);
+        assertEquals(expectedInput, actualInput);
     }
 }

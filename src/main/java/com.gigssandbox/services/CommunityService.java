@@ -23,7 +23,6 @@ public class CommunityService {
         communities.get(DEFAULT_COMMUNITY).add(user);
     }
 
-
     public void addUserToCommunity(User user, String communityName) throws NoSuchCommunityException {
         if (!communities.containsKey(communityName)) {
             throw new NoSuchCommunityException();

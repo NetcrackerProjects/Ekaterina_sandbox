@@ -2,6 +2,7 @@ package com.gigssandbox.command;
 
 import com.gigssandbox.exceptions.CommandValidationException;
 import com.gigssandbox.exceptions.UnsupportedCommandException;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandFactory {
@@ -11,12 +12,15 @@ public class CommandFactory {
         this.validator = new CommandValidator();
     }
 
-    public Command create(List<String> strings) {
+    public Command create(String commandParams) {
         CommandType type;
-        List<String> parameters = strings.subList(1, strings.size());
+
+        List<String> parametersWithType = List.of(split(commandParams));
+
+        List<String> parameters = parametersWithType.subList(1, parametersWithType.size());
 
         try {
-            type = extractType(strings);
+            type = extractType(parametersWithType);
 
         } catch (UnsupportedCommandException e) {
             type = CommandType.UNSUPPORTED;
@@ -35,8 +39,13 @@ public class CommandFactory {
     private CommandType extractType(List<String> strings) throws UnsupportedCommandException {
         try {
             return CommandType.valueOf(strings.get(0).toUpperCase());
+
         } catch (IllegalArgumentException e) {
             throw new UnsupportedCommandException();
         }
+    }
+
+    private String[] split(String string) {
+        return Arrays.stream(string.strip().split(",")).map(String::strip).toArray(String[]::new);
     }
 }

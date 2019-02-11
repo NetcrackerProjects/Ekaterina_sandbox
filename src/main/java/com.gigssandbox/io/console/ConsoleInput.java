@@ -10,11 +10,7 @@ public class ConsoleInput implements Input {
         this.in = new Scanner(System.in);
     }
 
-    public String[] receive() {
-        return split(in.nextLine());
-    }
-
-    private String[] split(String string) {
-        return string.trim().split("\\s+");
+    public String receive() {
+        return in.nextLine();
     }
 }

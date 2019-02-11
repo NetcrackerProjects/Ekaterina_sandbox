@@ -12,7 +12,6 @@ import com.gigssandbox.response.ResponseFactory;
 import com.gigssandbox.services.CommunityService;
 import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
-import java.util.List;
 
 class UserActivity {
     private final Input input;
@@ -33,7 +32,7 @@ class UserActivity {
         Command currentCommand;
 
         do {
-            currentCommand = commandFactory.create(List.of(input.receive()));
+            currentCommand = commandFactory.create(input.receive());
 
             Response response = responseFactory.create(userCommandHandler.process(currentCommand));
 

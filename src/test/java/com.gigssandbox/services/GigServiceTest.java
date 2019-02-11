@@ -59,13 +59,7 @@ public class GigServiceTest {
 
     @Test
     public void shouldReturnTrueWhenUserAlreadyPresentAmongAttendees() {
-        Collection<User> attendees = new HashSet<>();
-        attendees.add(user);
-        //todo attendees DI
-        Gig gig = Gig.builder()
-                .credentials(gigCredentials)
-                .attendees(attendees)
-                .build();
+        gig.add(user);
         gigs.put(gigCredentials, gig);
 
         boolean userPresentAmongAttendees = gigService.gigContainsUser(gigCredentials, user);
