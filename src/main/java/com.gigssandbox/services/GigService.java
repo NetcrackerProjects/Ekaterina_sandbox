@@ -2,7 +2,7 @@ package com.gigssandbox.services;
 
 import com.gigssandbox.entities.Gig;
 import com.gigssandbox.entities.User;
-import com.gigssandbox.exceptions.NoAppropriateGigException;
+import com.gigssandbox.exceptions.NoSuchGigException;
 import java.util.Map;
 
 public class GigService {
@@ -12,17 +12,17 @@ public class GigService {
         this.gigs = gigs;
     }
 
-    public void addUserToGig(User user, String gigCredentials) throws NoAppropriateGigException {
+    public void addUserToGig(User user, String gigCredentials) throws NoSuchGigException {
         if (!gigs.containsKey(gigCredentials)) {
-            throw new NoAppropriateGigException();
+            throw new NoSuchGigException();
         }
 
         gigs.get(gigCredentials).add(user);
     }
 
-    public void removeUserFromGig(User attendee, String gigCredentials) throws NoAppropriateGigException {
+    public void removeUserFromGig(User attendee, String gigCredentials) throws NoSuchGigException {
         if (!gigs.containsKey(gigCredentials)) {
-            throw new NoAppropriateGigException();
+            throw new NoSuchGigException();
         }
 
         gigs.get(gigCredentials).remove(attendee);

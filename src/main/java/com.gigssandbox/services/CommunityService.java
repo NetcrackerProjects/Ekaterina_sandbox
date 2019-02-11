@@ -2,8 +2,7 @@ package com.gigssandbox.services;
 
 import com.gigssandbox.entities.Community;
 import com.gigssandbox.entities.User;
-
-import com.gigssandbox.exceptions.NoAppropriateCommunityException;
+import com.gigssandbox.exceptions.NoSuchCommunityException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -25,9 +24,9 @@ public class CommunityService {
     }
 
 
-    public void addUserToCommunity(User user, String communityName) throws NoAppropriateCommunityException {
-        if(!communities.containsKey(communityName)) {
-            throw new NoAppropriateCommunityException();
+    public void addUserToCommunity(User user, String communityName) throws NoSuchCommunityException {
+        if (!communities.containsKey(communityName)) {
+            throw new NoSuchCommunityException();
         }
 
         communities.get(communityName).add(user);

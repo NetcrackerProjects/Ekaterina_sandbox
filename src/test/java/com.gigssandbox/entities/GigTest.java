@@ -1,10 +1,7 @@
 package com.gigssandbox.entities;
 
-import java.util.Collection;
-import java.util.HashSet;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -16,8 +13,7 @@ public class GigTest {
     @Before
     public void setUp() {
         this.gig = new Gig();
-        this.user = User
-                .builder()
+        this.user = User.builder()
                 .username("windvent")
                 .build();
     }
@@ -31,9 +27,7 @@ public class GigTest {
 
     @Test
     public void shouldRemoveUserFromGigWhenUserWantsToLeaveGig() {
-        Collection<User> attendees = new HashSet<>();
-        attendees.add(user);
-        Whitebox.setInternalState(gig, "attendees", attendees);
+        gig.add(user);
 
         gig.remove(user);
 

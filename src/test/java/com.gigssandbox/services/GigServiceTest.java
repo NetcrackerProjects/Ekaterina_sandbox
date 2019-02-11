@@ -2,7 +2,7 @@ package com.gigssandbox.services;
 
 import com.gigssandbox.entities.Gig;
 import com.gigssandbox.entities.User;
-import com.gigssandbox.exceptions.NoAppropriateGigException;
+import com.gigssandbox.exceptions.NoSuchGigException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,13 +26,11 @@ public class GigServiceTest {
         String username = "argalis";
         this.gigCredentials = "annisokay:2017-04-10";
 
-        this.user = User
-                .builder()
+        this.user = User.builder()
                 .username(username)
                 .build();
 
-        this.gig = Gig
-                .builder()
+        this.gig = Gig.builder()
                 .credentials(gigCredentials)
                 .attendees(new HashSet<>())
                 .build();
@@ -64,7 +62,10 @@ public class GigServiceTest {
         Collection<User> attendees = new HashSet<>();
         attendees.add(user);
         //todo attendees DI
-        Gig gig = Gig.builder().credentials(gigCredentials).attendees(attendees).build();
+        Gig gig = Gig.builder()
+                .credentials(gigCredentials)
+                .attendees(attendees)
+                .build();
         gigs.put(gigCredentials, gig);
 
         boolean userPresentAmongAttendees = gigService.gigContainsUser(gigCredentials, user);
@@ -72,13 +73,13 @@ public class GigServiceTest {
         assertTrue(userPresentAmongAttendees);
     }
 
-    @Test(expected = NoAppropriateGigException.class)
+    @Test(expected = NoSuchGigException.class)
     public void shouldThrowWhenThereAreNoGigsIdenticalToEnteredGigForJoining() throws Exception {
 
         gigService.addUserToGig(user, gigCredentials);
     }
 
-    @Test(expected = NoAppropriateGigException.class)
+    @Test(expected = NoSuchGigException.class)
     public void shouldThrowWhenThereAreNoGigsIdenticalToEnteredGigForLeaving() throws Exception {
         gigService.removeUserFromGig(user, gigCredentials);
     }

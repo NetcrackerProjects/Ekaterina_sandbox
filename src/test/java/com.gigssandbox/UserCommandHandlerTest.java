@@ -9,15 +9,13 @@ import com.gigssandbox.services.CommunityService;
 import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
-
-import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
@@ -46,14 +44,12 @@ public class UserCommandHandlerTest {
         this.gigDateText = "2016-06-19";
         this.gigCredentials = "Attack attack!:2016-06-19";
 
-        this.user = User
-                .builder()
+        this.user = User.builder()
                 .username(username)
                 .passwordHash(password.hashCode())
                 .build();
 
-        this.gig = Gig
-                .builder()
+        this.gig = Gig.builder()
                 .credentials(gigCredentials)
                 .attendees(new ArrayList<>())
                 .build();
@@ -63,8 +59,7 @@ public class UserCommandHandlerTest {
         this.users = new HashMap<>();
 
         this.communityName = "very progressive";
-        this.community = Community
-                .builder()
+        this.community = Community.builder()
                 .name(communityName)
                 .members(new HashSet<>())
                 .build();
@@ -140,7 +135,7 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnLogOutSuccessResultWhenLastCommandWasLogOut() {
         Result expectedResult = Result.LOG_OUT_SUCCESS;
-        Whitebox.setInternalState(userCommandHandler, "username", username);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
         users.put(username, user);
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LOG_OUT, Collections.emptyList()));
@@ -198,7 +193,6 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnNotRegisteredResultWhenUnregisteredUserTriesToLogOut() {
-        Whitebox.setInternalState(userCommandHandler, "username", username);
         userService = new UserService(Collections.emptyMap());
         Result expectedResult = Result.NOT_REGISTERED;
 
@@ -209,7 +203,7 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnJoinGigSuccessResultWhenUserTriesToJoinGig() {
-        Whitebox.setInternalState(userCommandHandler, "username", username);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
         gigs.put(gigCredentials, gig);
         Result expectedResult = Result.JOIN_GIG_SUCCESS;
 
@@ -219,20 +213,9 @@ public class UserCommandHandlerTest {
     }
 
     @Test
-    public void shouldReturnIncorrectDateFormatResultWhenUserEnteredDateWithExtraSpace() {
-        String wrongGigDateText = "2020-01- 10";
-        Whitebox.setInternalState(userCommandHandler, "username", username);
-        Result expectedResult = Result.INCORRECT_DATE_FORMAT;
-
-        Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_GIG, List.of(headliner, wrongGigDateText)));
-
-        assertEquals(expectedResult, actualResult);
-    }
-
-    @Test
     public void shouldReturnIncorrectDateFormatResultWhenUserEnteredDateWithoutDay() {
         String wrongGigDateText = "2010-09";
-        Whitebox.setInternalState(userCommandHandler, "username", username);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
         Result expectedResult = Result.INCORRECT_DATE_FORMAT;
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_GIG, List.of(headliner, wrongGigDateText)));
@@ -241,10 +224,10 @@ public class UserCommandHandlerTest {
     }
 
     @Test
-    public void shouldReturnIncorrectDateValueResultWhenMadeMistakeInDateWhileJoiningGig() {
+    public void shouldReturnIncorrectDateFormatResultWhenMadeMistakeInDateWhileJoiningGig() {
         String wrongGigDateText = "2011-09-39";
-        Whitebox.setInternalState(userCommandHandler, "username", username);
-        Result expectedResult = Result.INCORRECT_DATE_VALUE;
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
+        Result expectedResult = Result.INCORRECT_DATE_FORMAT;
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_GIG, List.of(headliner, wrongGigDateText)));
 
@@ -253,9 +236,9 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnNoAppropriateGigsResultWhenGigForJoiningCredentialsAreNotPresent() {
-        Result expectedResult = Result.NO_APPROPRIATE_GIG;
+        Result expectedResult = Result.NO_SUCH_GIG;
         users.put(username, user);
-        Whitebox.setInternalState(userCommandHandler, "username", username);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_GIG, List.of(headliner, gigDateText)));
 
@@ -267,7 +250,7 @@ public class UserCommandHandlerTest {
         Result expectedResult = Result.LEAVE_GIG_SUCCESS;
         gig.add(user);
         gigs.put(gigCredentials, gig);
-        Whitebox.setInternalState(userCommandHandler, "username", username);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_GIG, List.of(headliner, gigDateText)));
 
@@ -277,9 +260,9 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnIncorrectDateValueResultWhenUserMadeMistakeInDateWhileLeavingGig() {
         String incorrectDateText = "2013-99-21";
-        Result expectedResult = Result.INCORRECT_DATE_VALUE;
+        Result expectedResult = Result.INCORRECT_DATE_FORMAT;
         gig.add(user);
-        Whitebox.setInternalState(userCommandHandler, "username", username);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_GIG, List.of(headliner, incorrectDateText)));
 
@@ -291,7 +274,7 @@ public class UserCommandHandlerTest {
         String incorrectDateText = "2013-a1-11";
         Result expectedResult = Result.INCORRECT_DATE_FORMAT;
         gig.add(user);
-        Whitebox.setInternalState(userCommandHandler, "username", username);
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_GIG, List.of(headliner, incorrectDateText)));
 
@@ -301,8 +284,8 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnNoAppropriateGigResultWhenGigForLeavingIsNotPresent() {
         String wrongDateText = "2013-10-12";
-        Result expectedResult = Result.NO_APPROPRIATE_GIG;
-        Whitebox.setInternalState(userCommandHandler, "username", username);
+        Result expectedResult = Result.NO_SUCH_GIG;
+        userCommandHandler.process(new Command(CommandType.REGISTER, List.of(username, password)));
         gigService = new GigService(Collections.emptyMap());
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.LEAVE_GIG, List.of(headliner, wrongDateText)));
@@ -312,7 +295,7 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnNoAppropriateCommunityResultWhenEnteredCommunityIsNotPresent() {
-        Result expectedResult = Result.NO_APPROPRIATE_COMMUNITY;
+        Result expectedResult = Result.NO_SUCH_COMMUNITY;
 
         Result actualResult = userCommandHandler.process(new Command(CommandType.JOIN_COMMUNITY, Collections.singletonList(communityName)));
 

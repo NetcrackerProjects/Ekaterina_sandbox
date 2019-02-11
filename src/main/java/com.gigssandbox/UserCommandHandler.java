@@ -4,30 +4,28 @@ import com.gigssandbox.command.Command;
 import com.gigssandbox.exceptions.AlreadyLoggedInException;
 import com.gigssandbox.exceptions.AlreadyRegisteredException;
 import com.gigssandbox.exceptions.DateParsingException;
-import com.gigssandbox.exceptions.IncorrectDateValueException;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
-import com.gigssandbox.exceptions.NoAppropriateCommunityException;
-import com.gigssandbox.exceptions.NoAppropriateGigException;
+import com.gigssandbox.exceptions.NoSuchCommunityException;
+import com.gigssandbox.exceptions.NoSuchGigException;
 import com.gigssandbox.exceptions.NotRegisteredException;
-
 import com.gigssandbox.services.CommunityService;
 import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 class UserCommandHandler {
     private UserService userService;
     private CommunityService communityService;
     private GigService gigService;
     private String username;
-    private CalendarValidator calendarValidator;
-    private GigCredentialsConverter gigCredentialsConverter;
 
     UserCommandHandler(UserService userService, CommunityService communityService, GigService gigService) {
         this.userService = userService;
         this.communityService = communityService;
         this.gigService = gigService;
-        this.calendarValidator = new CalendarValidator();
-        this.gigCredentialsConverter = new GigCredentialsConverter();
     }
 
     Result process(Command command) {
@@ -91,8 +89,8 @@ class UserCommandHandler {
             communityService.addUserToCommunity(userService.getUser(username), communityName);
             return Result.JOIN_COMMUNITY_SUCCESS;
 
-        } catch (NoAppropriateCommunityException e) {
-            return Result.NO_APPROPRIATE_COMMUNITY;
+        } catch (NoSuchCommunityException e) {
+            return Result.NO_SUCH_COMMUNITY;
         }
     }
 
@@ -111,11 +109,11 @@ class UserCommandHandler {
         }
     }
 
-    private Result joinGig(String headliner, String gigDateText) {
+    private Result joinGig(String headliner, String gigDate) {
         try {
-            calendarValidator.validate(gigDateText);
+            validateDate(gigDate);
 
-            String gigCredentials = gigCredentialsConverter.create(headliner, gigDateText);
+            String gigCredentials = createGigCredentials(headliner, gigDate);
 
             gigService.addUserToGig(userService.getUser(username), gigCredentials);
             return Result.JOIN_GIG_SUCCESS;
@@ -123,28 +121,40 @@ class UserCommandHandler {
         } catch (DateParsingException e) {
             return Result.INCORRECT_DATE_FORMAT;
 
-        }  catch (IncorrectDateValueException e) {
-            return Result.INCORRECT_DATE_VALUE;
-
-        }  catch (NoAppropriateGigException e) {
-            return Result.NO_APPROPRIATE_GIG;
+        } catch (NoSuchGigException e) {
+            return Result.NO_SUCH_GIG;
         }
     }
 
-    private Result leaveGig(String headliner, String gigDateText) {
+    private Result leaveGig(String headliner, String gigDate) {
         try {
-            calendarValidator.validate(gigDateText);
-            gigService.removeUserFromGig(userService.getUser(username), gigCredentialsConverter.create(headliner, gigDateText));
+            validateDate(gigDate);
+
+            gigService.removeUserFromGig(userService.getUser(username), createGigCredentials(headliner, gigDate));
             return Result.LEAVE_GIG_SUCCESS;
 
         } catch (DateParsingException e) {
             return Result.INCORRECT_DATE_FORMAT;
 
-        } catch (IncorrectDateValueException e) {
-            return Result.INCORRECT_DATE_VALUE;
-
-        } catch (NoAppropriateGigException e) {
-            return Result.NO_APPROPRIATE_GIG;
+        } catch (NoSuchGigException e) {
+            return Result.NO_SUCH_GIG;
         }
+    }
+
+    private void validateDate(String date) throws DateParsingException {
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+        format.setLenient(false);
+
+        try {
+            format.parse(date);
+
+        } catch (ParseException e) {
+            throw new DateParsingException();
+        }
+    }
+
+    private String createGigCredentials(String headliner, String date) {
+        return headliner.concat(":").concat(date);
     }
 }

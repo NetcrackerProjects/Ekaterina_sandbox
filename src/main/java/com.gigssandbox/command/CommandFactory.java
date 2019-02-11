@@ -1,7 +1,7 @@
 package com.gigssandbox.command;
 
 import com.gigssandbox.exceptions.CommandValidationException;
-import java.util.Arrays;
+import com.gigssandbox.exceptions.UnsupportedCommandException;
 import java.util.List;
 
 public class CommandFactory {
@@ -11,24 +11,32 @@ public class CommandFactory {
         this.validator = new CommandValidator();
     }
 
-    public Command create(String... strings) {
-        CommandType currentType;
-        List<String> parameters = List.of(Arrays.stream(strings).skip(1).toArray(String[]::new));
+    public Command create(List<String> strings) {
+        CommandType type;
+        List<String> parameters = strings.subList(1, strings.size());
 
         try {
-            currentType = CommandType.valueOf(strings[0].toUpperCase());
+            type = extractType(strings);
 
-        } catch (IllegalArgumentException e) {
-            currentType = CommandType.UNSUPPORTED;
+        } catch (UnsupportedCommandException e) {
+            type = CommandType.UNSUPPORTED;
         }
 
         try {
-            validator.validate(currentType, parameters);
+            validator.validate(type, parameters);
 
         } catch (CommandValidationException e) {
-            currentType = CommandType.NOT_ENOUGH_PARAMETERS;
+            type = CommandType.NOT_ENOUGH_PARAMETERS;
         }
 
-        return new Command(currentType, parameters);
+        return new Command(type, parameters);
+    }
+
+    private CommandType extractType(List<String> strings) throws UnsupportedCommandException {
+        try {
+            return CommandType.valueOf(strings.get(0).toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new UnsupportedCommandException();
+        }
     }
 }

@@ -1,17 +1,18 @@
 package com.gigssandbox;
 
+import com.gigssandbox.command.Command;
+import com.gigssandbox.command.CommandFactory;
+import com.gigssandbox.command.CommandType;
 import com.gigssandbox.io.Input;
 import com.gigssandbox.io.Output;
 import com.gigssandbox.io.console.ConsoleInput;
 import com.gigssandbox.io.console.ConsoleOutput;
-import com.gigssandbox.command.Command;
-import com.gigssandbox.command.CommandFactory;
-import com.gigssandbox.command.CommandType;
 import com.gigssandbox.response.Response;
 import com.gigssandbox.response.ResponseFactory;
 import com.gigssandbox.services.CommunityService;
 import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
+import java.util.List;
 
 class UserActivity {
     private final Input input;
@@ -32,9 +33,9 @@ class UserActivity {
         Command currentCommand;
 
         do {
-            currentCommand = commandFactory.create((input.receive()));
+            currentCommand = commandFactory.create(List.of(input.receive()));
 
-            Response response =responseFactory.create(userCommandHandler.process(currentCommand));
+            Response response = responseFactory.create(userCommandHandler.process(currentCommand));
 
             output.send(response);
 

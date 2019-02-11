@@ -19,10 +19,10 @@ public class CommandFactoryTest {
 
     @Test
     public void shouldReturnLoginCommandWhenZeroElementConsistsOfLoginCommand() {
-        String[] loginArgs = new String[]{"log_in", "Bury", "Tomorrow"};
+        List<String> loginArgs = List.of("log_in", "Bury", "Tomorrow");
         List<String> parameters = new ArrayList<>();
-        parameters.add(loginArgs[1]);
-        parameters.add(loginArgs[2]);
+        parameters.add(loginArgs.get(1));
+        parameters.add(loginArgs.get(2));
         Command expectedCommand = new Command(CommandType.LOG_IN, parameters);
 
         Command actualCommand = commandFactory.create(loginArgs);
@@ -32,8 +32,8 @@ public class CommandFactoryTest {
 
     @Test
     public void shouldReturnGetGigsByBandCommandWhenZeroElementConsistsOfGetGigsByBandCommand() {
-        String[] getGigsByBandArgs = new String[]{"get_gigs_by_band", "Oleg Gazmanov"};
-        Command expectedCommand = new Command(CommandType.GET_GIGS_BY_BAND, Collections.singletonList(getGigsByBandArgs[1]));
+        List<String> getGigsByBandArgs = List.of("get_gigs_by_band", "Oleg Gazmanov");
+        Command expectedCommand = new Command(CommandType.GET_GIGS_BY_BAND, Collections.singletonList(getGigsByBandArgs.get(1)));
 
         Command actualCommand = commandFactory.create(getGigsByBandArgs);
 
@@ -42,8 +42,8 @@ public class CommandFactoryTest {
 
     @Test
     public void shouldReturnJoinCommunityCommandWhenZeroElementConsistsOfJoinCommunityCommand() {
-        String[] joinCommunityArgs = new String[]{"join_community", "Autocad"};
-        Command expectedCommand = new Command(CommandType.JOIN_COMMUNITY, Collections.singletonList(joinCommunityArgs[1]));
+        List<String> joinCommunityArgs = List.of("join_community", "Autocad");
+        Command expectedCommand = new Command(CommandType.JOIN_COMMUNITY, Collections.singletonList(joinCommunityArgs.get(1)));
 
         Command actualCommand = commandFactory.create(joinCommunityArgs);
 
@@ -52,7 +52,7 @@ public class CommandFactoryTest {
 
     @Test
     public void shouldReturnGetGigsCommandWhenZeroElementConsistsOfGetGigsCommand() {
-        String[] getGigsArgs = new String[]{"get_gigs"};
+        List<String> getGigsArgs = Collections.singletonList("get_gigs");
         Command expectedCommand = new Command(CommandType.GET_GIGS, Collections.emptyList());
 
         Command actualCommand = commandFactory.create(getGigsArgs);
@@ -62,7 +62,7 @@ public class CommandFactoryTest {
 
     @Test
     public void shouldReturnUnsuportedCommandWhenZeroElementConsistsOfUnsupportedText() {
-        String[] unsupportedCommamdArgs = new String[]{"Adem"};
+        List<String> unsupportedCommamdArgs = Collections.singletonList("Adem");
         Command expectedCommand = new Command(CommandType.UNSUPPORTED, Collections.emptyList());
 
         Command actualCommand = commandFactory.create(unsupportedCommamdArgs);
@@ -73,8 +73,8 @@ public class CommandFactoryTest {
     @Test
     public void shouldReturnNotEnoughParametersCommandWhenArrayContainsNotEnoughParameters() {
         String username = "Shamil";
-        String[] notEnoughParametersArray = new String[] {"log_in", username};
-        Command expectedCommand = new Command(CommandType.NOT_ENOUGH_PARAMETERS, Collections.singletonList(username));
+        List<String> notEnoughParametersArray = List.of("log_in", username);
+        Command expectedCommand = new Command(CommandType.NOT_ENOUGH_PARAMETERS, notEnoughParametersArray.subList(1, notEnoughParametersArray.size()));
 
         Command actualCommand = commandFactory.create(notEnoughParametersArray);
 

@@ -10,8 +10,7 @@ public class UserTest {
 
     @Before
     public void setUp() {
-        this.user = User
-                .builder()
+        this.user = User.builder()
                 .username("Hedgehog")
                 .build();
     }

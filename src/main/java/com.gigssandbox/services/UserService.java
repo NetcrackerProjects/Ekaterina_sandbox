@@ -5,7 +5,6 @@ import com.gigssandbox.exceptions.AlreadyLoggedInException;
 import com.gigssandbox.exceptions.AlreadyRegisteredException;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
 import com.gigssandbox.exceptions.NotRegisteredException;
-
 import java.util.Map;
 
 public class UserService {

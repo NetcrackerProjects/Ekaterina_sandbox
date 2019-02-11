@@ -1,3 +1,4 @@
 package cobertura;
 
-public @interface IgnoreDuringCodeCoverage {}
+public @interface IgnoreDuringCodeCoverage {
+}

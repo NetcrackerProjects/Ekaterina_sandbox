@@ -9,7 +9,7 @@ class ResponseStore {
     private final Properties properties;
 
     ResponseStore() {
-        properties = new Properties();
+        this.properties = new Properties();
         try {
             properties.load(new FileInputStream("src/main/resources/response.properties"));
         } catch (IOException e) {

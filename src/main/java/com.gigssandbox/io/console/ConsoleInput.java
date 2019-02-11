@@ -1,7 +1,6 @@
 package com.gigssandbox.io.console;
 
 import com.gigssandbox.io.Input;
-
 import java.util.Scanner;
 
 public class ConsoleInput implements Input {

@@ -2,7 +2,7 @@ package com.gigssandbox.services;
 
 import com.gigssandbox.entities.Community;
 import com.gigssandbox.entities.User;
-import com.gigssandbox.exceptions.NoAppropriateCommunityException;
+import com.gigssandbox.exceptions.NoSuchCommunityException;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
@@ -27,20 +27,17 @@ public class CommunityServiceTest {
         this.communityName = "At the disco";
         this.defaultCommunityName = "default_community";
 
-        this.community = Community
-                .builder()
+        this.community = Community.builder()
                 .name(communityName)
                 .members(new ArrayList<>())
                 .build();
 
-        Community defaultCommunity = Community
-                .builder()
+        Community defaultCommunity = Community.builder()
                 .name(defaultCommunityName)
                 .members(new ArrayList<>())
                 .build();
 
-        this.user = User
-                .builder()
+        this.user = User.builder()
                 .username(username)
                 .build();
 
@@ -76,7 +73,7 @@ public class CommunityServiceTest {
         assertFalse(communityService.communityContainsUser(communityName, user));
     }
 
-    @Test(expected = NoAppropriateCommunityException.class)
+    @Test(expected = NoSuchCommunityException.class)
     public void shouldThrowWhenTHereIsNoCommunitiesIdenticalToPassedOne() throws Exception {
         communityService.addUserToCommunity(user, communityName);
     }

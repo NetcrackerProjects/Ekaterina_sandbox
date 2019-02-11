@@ -24,8 +24,7 @@ public class UserServiceTest {
     public void setUp() {
         this.username = "oliver_sykes";
         this.password = "poprockisthebest";
-        this.user = User
-                .builder()
+        this.user = User.builder()
                 .username(username)
                 .passwordHash(password.hashCode())
                 .build();
