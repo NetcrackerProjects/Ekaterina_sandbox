@@ -3,7 +3,6 @@ package com.gigssandbox.services;
 import com.gigssandbox.entities.Gig;
 import com.gigssandbox.entities.User;
 import com.gigssandbox.exceptions.NoSuchGigException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,20 +17,25 @@ public class GigServiceTest {
     private  Map<String, Gig> gigs;
     private User user;
     private Gig gig;
+    private String headliner;
+    private String gigDate;
     private String gigCredentials;
 
     @Before
     public void setUp() {
         this.gigs = new HashMap<>();
         String username = "argalis";
-        this.gigCredentials = "annisokay:2017-04-10";
+        this.headliner = "annisokay";
+        this.gigDate = "2017-04-10";
+        this.gigCredentials = headliner.concat(":").concat(gigDate);
 
         this.user = User.builder()
                 .username(username)
                 .build();
 
         this.gig = Gig.builder()
-                .credentials(gigCredentials)
+                .headliner(headliner)
+                .gigDate(gigDate)
                 .attendees(new HashSet<>())
                 .build();
 
@@ -41,26 +45,26 @@ public class GigServiceTest {
 
     @Test
     public void shouldAddUserToAttendeesWhenUserWantsToJoinGig() throws Exception {
-        gigs.put(gigCredentials, gig);
+        this.gigs.put(gigCredentials, gig);
 
-        gigService.addUserToGig(user, gigCredentials);
+        gigService.addUserToGig(user, headliner, gigDate);
 
         assertTrue(gigService.gigContainsUser(gigCredentials, user));
     }
 
     @Test
     public void shouldRemoveUserFromAttendeesWhenUserWantsToLeaveGig() throws Exception {
-        gigs.put(gigCredentials, gig);
+        this.gigs.put(gigCredentials, gig);
 
-        gigService.removeUserFromGig(user, gigCredentials);
+        gigService.removeUserFromGig(user, headliner, gigDate);
 
         assertFalse(gigService.gigContainsUser(gigCredentials, user));
     }
 
     @Test
     public void shouldReturnTrueWhenUserAlreadyPresentAmongAttendees() {
-        gig.add(user);
-        gigs.put(gigCredentials, gig);
+        this.gig.add(user);
+        this.gigs.put(gigCredentials, gig);
 
         boolean userPresentAmongAttendees = gigService.gigContainsUser(gigCredentials, user);
 
@@ -69,12 +73,11 @@ public class GigServiceTest {
 
     @Test(expected = NoSuchGigException.class)
     public void shouldThrowWhenThereAreNoGigsIdenticalToEnteredGigForJoining() throws Exception {
-
-        gigService.addUserToGig(user, gigCredentials);
+        gigService.addUserToGig(user, headliner, gigDate);
     }
 
     @Test(expected = NoSuchGigException.class)
     public void shouldThrowWhenThereAreNoGigsIdenticalToEnteredGigForLeaving() throws Exception {
-        gigService.removeUserFromGig(user, gigCredentials);
+        gigService.removeUserFromGig(user, headliner, gigDate);
     }
 }

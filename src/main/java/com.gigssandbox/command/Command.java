@@ -17,7 +17,7 @@ public class Command {
     @EqualsAndHashCode.Exclude
     private final CommandIterator commandIterator;
 
-    public Command(CommandType type, List<String> parameters) {
+    Command(CommandType type, List<String> parameters) {
         this.type = type;
         this.parameters = parameters;
         this.commandIterator = new CommandIterator();

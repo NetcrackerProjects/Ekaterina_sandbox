@@ -14,11 +14,11 @@ class CommandValidator {
         switch (type) {
             case LOG_IN:
             case REGISTER:
+            case JOIN_GIG:
                 return parametersNumber == 2;
 
             case GET_GIGS_BY_BAND:
             case JOIN_COMMUNITY:
-            case JOIN_GIG:
                 return parametersNumber == 1;
 
             default:

@@ -20,16 +20,16 @@ public class CommunityTest {
 
     @Test
     public void shouldAddUserToChosenCommunityWhenUserWantsToJoinSpecificCommunity() {
-        community.add(user);
+        this.community.add(user);
 
         assertTrue(community.getMembers().contains(user));
     }
 
     @Test
     public void shouldRemoveUserFromCommunityWhenUserWantsToLeaveCommunity() {
-        community.add(user);
+        this.community.add(user);
 
-        community.remove(user);
+        this.community.remove(user);
 
         assertFalse(community.getMembers().contains(user));
     }

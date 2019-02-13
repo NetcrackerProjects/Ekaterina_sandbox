@@ -18,7 +18,7 @@ public class UserTest {
     @Test
     public void shouldReturnTrueWhenUserIsAlreadyLoggedIn() {
         boolean expectedValue = true;
-        user.setLoggedIn(expectedValue);
+        this.user.setLoggedIn(expectedValue);
 
         boolean actualValue = user.isLoggedIn();
 

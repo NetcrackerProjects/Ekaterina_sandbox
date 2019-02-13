@@ -52,8 +52,4 @@ public class UserService {
     public User getUser(String username) {
         return users.get(username);
     }
-
-    boolean exists(String username) {
-        return users.containsKey(username);
-    }
 }

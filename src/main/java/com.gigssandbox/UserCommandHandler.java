@@ -3,7 +3,7 @@ package com.gigssandbox;
 import com.gigssandbox.command.Command;
 import com.gigssandbox.exceptions.AlreadyLoggedInException;
 import com.gigssandbox.exceptions.AlreadyRegisteredException;
-import com.gigssandbox.exceptions.DateParsingException;
+import com.gigssandbox.exceptions.IncorrectDateException;
 import com.gigssandbox.exceptions.IncorrectPasswordException;
 import com.gigssandbox.exceptions.NoSuchCommunityException;
 import com.gigssandbox.exceptions.NoSuchGigException;
@@ -11,10 +11,6 @@ import com.gigssandbox.exceptions.NotRegisteredException;
 import com.gigssandbox.services.CommunityService;
 import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 class UserCommandHandler {
     private UserService userService;
@@ -111,50 +107,28 @@ class UserCommandHandler {
 
     private Result joinGig(String headliner, String gigDate) {
         try {
-            validateDate(gigDate);
-
-            String gigCredentials = createGigCredentials(headliner, gigDate);
-
-            gigService.addUserToGig(userService.getUser(username), gigCredentials);
+            gigService.addUserToGig(userService.getUser(username), headliner, gigDate);
             return Result.JOIN_GIG_SUCCESS;
 
-        } catch (DateParsingException e) {
+        } catch (IncorrectDateException e) {
             return Result.INCORRECT_DATE_FORMAT;
 
-        } catch (NoSuchGigException e) {
+        }
+        catch (NoSuchGigException e) {
             return Result.NO_SUCH_GIG;
         }
     }
 
     private Result leaveGig(String headliner, String gigDate) {
         try {
-            validateDate(gigDate);
-
-            gigService.removeUserFromGig(userService.getUser(username), createGigCredentials(headliner, gigDate));
+            gigService.removeUserFromGig(userService.getUser(username), headliner, gigDate);
             return Result.LEAVE_GIG_SUCCESS;
 
-        } catch (DateParsingException e) {
+        } catch (IncorrectDateException e) {
             return Result.INCORRECT_DATE_FORMAT;
 
         } catch (NoSuchGigException e) {
             return Result.NO_SUCH_GIG;
         }
-    }
-
-    private void validateDate(String date) throws DateParsingException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-
-        format.setLenient(false);
-
-        try {
-            format.parse(date);
-
-        } catch (ParseException e) {
-            throw new DateParsingException();
-        }
-    }
-
-    private String createGigCredentials(String headliner, String date) {
-        return headliner.concat(":").concat(date);
     }
 }

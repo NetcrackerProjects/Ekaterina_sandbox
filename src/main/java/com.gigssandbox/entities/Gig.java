@@ -13,7 +13,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Gig {
     private int id;
-    private String credentials;
+    private String headliner;
+    private String gigDate;
     private String support;
     private String location;
     private Collection<User> attendees;

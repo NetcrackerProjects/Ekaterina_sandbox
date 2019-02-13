@@ -49,7 +49,7 @@ public class CommunityServiceTest {
 
     @Test
     public void shouldAddUserToCommunityWhenUserEnteredExistingCommunityName() throws Exception {
-        communities.put(communityName, community);
+        this.communities.put(communityName, community);
 
         communityService.addUserToCommunity(user, communityName);
 
@@ -65,8 +65,8 @@ public class CommunityServiceTest {
 
     @Test
     public void shouldRemoveUserFromCommunityWhenUserWantsToLeaveTheCommunity() {
-        community.add(user);
-        communities.put(communityName, community);
+        this.community.add(user);
+        this.communities.put(communityName, community);
 
         communityService.removeUserFromCommunity(user);
 

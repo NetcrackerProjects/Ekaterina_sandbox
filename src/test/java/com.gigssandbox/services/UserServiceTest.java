@@ -35,15 +35,16 @@ public class UserServiceTest {
 
     @Test
     public void shoudAddUserToUsersWhenUserTriesToRegister() throws Exception {
+        this.user.setLoggedIn(true);
+
         userService.registerUser(username, password);
 
-        assertTrue(userService.exists(username));
+        assertTrue(users.containsKey(username) && users.containsValue(user));
     }
 
     @Test(expected = AlreadyRegisteredException.class)
-    public void shouldThrowWhenUserCredentialsAreAlreadyPresent() throws Exception {
-        users.put(username, user);
-
+    public void shouldThrowWhenUserTriesToRegisterTwice() throws Exception {
+        userService.registerUser(username, password);
         userService.registerUser(username, password);
     }
 
@@ -53,10 +54,9 @@ public class UserServiceTest {
     }
 
     @Test(expected = IncorrectPasswordException.class)
-    public void shouldThrowWhenUserPassedIncorrectPassword() throws Exception {
-        users.put(username, user);
-
+    public void shouldThrowWhenIncorrectPasswordIsPassed() throws Exception {
         String incorrectPassword = "Pooh";
+        userService.registerUser(username, password);
 
         userService.logUserIn(username, incorrectPassword);
     }
@@ -64,21 +64,25 @@ public class UserServiceTest {
     @Test(expected = AlreadyLoggedInException.class)
     public void shouldThrowWHenUserIsAlreadyLoggedIn() throws Exception {
         user.setLoggedIn(true);
-        users.put(username, user);
+        userService.registerUser(username, password);
 
         userService.logUserIn(username, password);
     }
 
     @Test
-    public void shouldNotThrowIfUserLoginAndPasswordAreCorrectAndPresent() throws Exception {
-        users.put(username, user);
+    public void shouldReturnTrueWhenUserHasSuccessfullyLoggedIn() throws Exception {
+        userService.registerUser(username, password);
+        userService.logUserOut(username);
 
         userService.logUserIn(username, password);
+
+        assertTrue(userService.getUser(username).isLoggedIn());
     }
 
     @Test
-    public void shouldReturnBobWhenAppTriesToGetBobFromUsers() {
-        users.put(username, user);
+    public void shouldReturnUserWhenAppTriesToGetUserFromUsers() throws Exception {
+        userService.registerUser(username, password);
+        this.user.setLoggedIn(true);
 
         User actualUser = userService.getUser(username);
 
