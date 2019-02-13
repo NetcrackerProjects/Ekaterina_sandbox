@@ -20,16 +20,16 @@ public class GigTest {
 
     @Test
     public void shouldAddUserToGigWhenUserWantsToAttendGig() {
-        this.gig.add(user);
+        gig.add(user);
 
         assertTrue(gig.getAttendees().contains(user));
     }
 
     @Test
     public void shouldRemoveUserFromGigWhenUserWantsToLeaveGig() {
-        this.gig.add(user);
+        gig.add(user);
 
-        this.gig.remove(user);
+        gig.remove(user);
 
         assertFalse(gig.getAttendees().contains(user));
     }

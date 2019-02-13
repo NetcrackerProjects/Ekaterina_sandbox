@@ -35,11 +35,11 @@ public class UserServiceTest {
 
     @Test
     public void shoudAddUserToUsersWhenUserTriesToRegister() throws Exception {
-        this.user.setLoggedIn(true);
+        user.setLoggedIn(true);
 
         userService.registerUser(username, password);
 
-        assertTrue(users.containsKey(username) && users.containsValue(user));
+        assertEquals(user, users.get(username));
     }
 
     @Test(expected = AlreadyRegisteredException.class)
@@ -82,7 +82,7 @@ public class UserServiceTest {
     @Test
     public void shouldReturnUserWhenAppTriesToGetUserFromUsers() throws Exception {
         userService.registerUser(username, password);
-        this.user.setLoggedIn(true);
+        user.setLoggedIn(true);
 
         User actualUser = userService.getUser(username);
 

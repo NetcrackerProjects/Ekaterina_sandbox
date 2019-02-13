@@ -45,7 +45,7 @@ public class GigServiceTest {
 
     @Test
     public void shouldAddUserToAttendeesWhenUserWantsToJoinGig() throws Exception {
-        this.gigs.put(gigCredentials, gig);
+        gigs.put(gigCredentials, gig);
 
         gigService.addUserToGig(user, headliner, gigDate);
 
@@ -54,7 +54,7 @@ public class GigServiceTest {
 
     @Test
     public void shouldRemoveUserFromAttendeesWhenUserWantsToLeaveGig() throws Exception {
-        this.gigs.put(gigCredentials, gig);
+        gigs.put(gigCredentials, gig);
 
         gigService.removeUserFromGig(user, headliner, gigDate);
 
@@ -63,8 +63,8 @@ public class GigServiceTest {
 
     @Test
     public void shouldReturnTrueWhenUserAlreadyPresentAmongAttendees() {
-        this.gig.add(user);
-        this.gigs.put(gigCredentials, gig);
+        gig.add(user);
+        gigs.put(gigCredentials, gig);
 
         boolean userPresentAmongAttendees = gigService.gigContainsUser(gigCredentials, user);
 

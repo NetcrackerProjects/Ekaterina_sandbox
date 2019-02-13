@@ -111,7 +111,7 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnJoinCommunitySuccessResultWhenLastCommandWasJoinCommunity() {
         userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
-        this.communities.put(communityName, community);
+        communities.put(communityName, community);
         Result expectedResult = Result.JOIN_COMMUNITY_SUCCESS;
 
         Result actualResult = userCommandHandler.process(commandFactory.create("join_community,".concat(communityName)));
@@ -197,7 +197,7 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnJoinGigSuccessResultWhenUserTriesToJoinGig() {
         userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
-        this.gigs.put(gigCredentials, gig);
+        gigs.put(gigCredentials, gig);
         Result expectedResult = Result.JOIN_GIG_SUCCESS;
 
         Result actualResult = userCommandHandler.process(commandFactory.create("join_gig,".concat(headliner).concat(",").concat(gigDate)));
@@ -240,8 +240,8 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnLeaveGigSuccessResultWhenUserTriesToLeaveGig() {
         Result expectedResult = Result.LEAVE_GIG_SUCCESS;
-        this.gig.add(user);
-        this.gigs.put(gigCredentials, gig);
+        gig.add(user);
+        gigs.put(gigCredentials, gig);
         userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
 
         Result actualResult = userCommandHandler.process(commandFactory.create("leave_gig,".concat(headliner).concat(",").concat(gigDate)));
@@ -253,7 +253,7 @@ public class UserCommandHandlerTest {
     public void shouldReturnIncorrectDateResultWhenUserMadeMistakeInDateWhileLeavingGig() {
         String wrongGigDate = "2013-99-21";
         Result expectedResult = Result.INCORRECT_DATE_FORMAT;
-        this.gig.add(user);
+        gig.add(user);
         userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
 
         Result actualResult = userCommandHandler.process(commandFactory.create("leave_gig,".concat(headliner).concat(",").concat(wrongGigDate)));
