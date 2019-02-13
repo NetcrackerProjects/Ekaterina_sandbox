@@ -2,11 +2,9 @@ sudo: false
 
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk11
 os:
   - linux
-
-script: mvn clean cobertura:cobertura
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
