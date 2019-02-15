@@ -24,6 +24,7 @@ public class ConnectionService extends Thread {
     public SocketConnection nextClient() throws ConnectionServiceStoppedException {
         try {
             return new SocketConnection(clientSockets.take());
+
         } catch (InterruptedException e) {
             throw new ConnectionServiceStoppedException();
         }

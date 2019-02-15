@@ -28,7 +28,7 @@ public class SocketOutputTest {
 
     @Test
     public void shouldSendTextToClientWhenAppTriesToSendAnswer() {
-        String expectedOutput = "You have successfully joined the gig";
+        String expectedOutput = "You have successfully joined the gig\n";
 
         socketOutput.send(new ResponseFactory().create(Result.JOIN_GIG_SUCCESS));
 
