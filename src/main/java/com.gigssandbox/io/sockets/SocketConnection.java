@@ -7,11 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-@EqualsAndHashCode
-@ToString
 public class SocketConnection implements Connection {
     private Socket clientSocket;
 

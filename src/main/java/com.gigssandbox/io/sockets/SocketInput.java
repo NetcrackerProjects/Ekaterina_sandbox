@@ -4,11 +4,7 @@ import com.gigssandbox.exceptions.SocketReadingException;
 import com.gigssandbox.io.Input;
 import java.io.BufferedReader;
 import java.io.IOException;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-@EqualsAndHashCode
-@ToString
 class SocketInput implements Input {
     private BufferedReader in;
 
