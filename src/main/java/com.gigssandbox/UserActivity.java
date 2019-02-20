@@ -12,7 +12,7 @@ import com.gigssandbox.services.CommunityService;
 import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
 
-class UserActivity {
+class UserActivity implements Runnable {
     private final Input input;
     private final Output output;
     private final UserCommandHandler userCommandHandler;
@@ -27,7 +27,8 @@ class UserActivity {
         this.input = socketConnection.getInput();
     }
 
-    void start() {
+    @Override
+    public void run() {
         Command currentCommand;
 
         do {

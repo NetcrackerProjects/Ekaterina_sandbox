@@ -1,6 +1,6 @@
 package com.gigssandbox.io.sockets;
 
-import com.gigssandbox.exceptions.ConnectionEstablishingException;
+import com.gigssandbox.io.sockets.exception.SocketOutputException;
 import com.gigssandbox.exceptions.ConnectionReceivingException;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -15,7 +15,7 @@ class ConnectionReceiver extends Thread {
             this.serverSocket = new ServerSocket(PORT);
 
         } catch (IOException e) {
-            throw new ConnectionEstablishingException();
+            throw new SocketOutputException();
         }
     }
 

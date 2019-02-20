@@ -1,6 +1,6 @@
 package com.gigssandbox.io.sockets;
 
-import com.gigssandbox.exceptions.ConnectionEstablishingException;
+import com.gigssandbox.io.sockets.exception.SocketOutputException;
 import com.gigssandbox.io.Connection;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ public class SocketConnection implements Connection {
     private Socket clientSocket;
 
     SocketConnection(Socket clientSocket) {
-            this.clientSocket = clientSocket;
+        this.clientSocket = clientSocket;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class SocketConnection implements Connection {
             return new SocketInput(new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
 
         } catch (IOException e) {
-            throw new ConnectionEstablishingException();
+            throw new SocketOutputException();
         }
     }
 
@@ -31,7 +31,7 @@ public class SocketConnection implements Connection {
             return new SocketOutput(new PrintWriter(clientSocket.getOutputStream()));
 
         } catch (IOException e) {
-            throw new ConnectionEstablishingException();
+            throw new SocketOutputException();
         }
     }
 }

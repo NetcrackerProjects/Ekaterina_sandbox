@@ -10,36 +10,37 @@ import java.io.OutputStream;
 import java.net.Socket;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SocketConnectionTest {
-    private  SocketConnection socketConnection;
+    private SocketConnection socketConnection;
+    private Socket clientSocket;
 
     @Before
-    public void setUp() throws IOException {
-        String textForInputStream = "some text";
-        Socket clientSocket = Mockito.mock(Socket.class);
-
-        InputStream in = new ByteArrayInputStream(textForInputStream.getBytes());
-        Mockito.when(clientSocket.getInputStream()).thenReturn(in);
-
-        OutputStream out = new ByteArrayOutputStream();
-        Mockito.when(clientSocket.getOutputStream()).thenReturn(out);
-
+    public void setUp() {
+        this.clientSocket = mock(Socket.class);
         this.socketConnection = new SocketConnection(clientSocket);
     }
 
     @Test
-    public void shouldReturnSocketInputWhenInputWasAsked() {
+    public void shouldReturnSocketInputWhenInputWasAsked() throws Exception {
+        String textForInputStream = "some text";
+        InputStream in = new ByteArrayInputStream(textForInputStream.getBytes());
+        when(clientSocket.getInputStream()).thenReturn(in);
+
         Input fetchedInput = socketConnection.getInput();
 
         assertNotNull(fetchedInput);
     }
 
     @Test
-    public void shouldReturnSocketOutputWhenOutputWasAsked() {
+    public void shouldReturnSocketOutputWhenOutputWasAsked() throws IOException {
+        OutputStream out = new ByteArrayOutputStream();
+        when(clientSocket.getOutputStream()).thenReturn(out);
+
         Output fetchedOutput = socketConnection.getOutput();
 
         assertNotNull(fetchedOutput);

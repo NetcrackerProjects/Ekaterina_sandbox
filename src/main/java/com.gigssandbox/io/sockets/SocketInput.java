@@ -1,6 +1,6 @@
 package com.gigssandbox.io.sockets;
 
-import com.gigssandbox.exceptions.SocketReadingException;
+import com.gigssandbox.io.sockets.exception.SocketInputException;
 import com.gigssandbox.io.Input;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +18,7 @@ class SocketInput implements Input {
             return in.readLine();
 
         } catch (IOException e) {
-            throw new SocketReadingException();
+            throw new SocketInputException();
         }
     }
 }

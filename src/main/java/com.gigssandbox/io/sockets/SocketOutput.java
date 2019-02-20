@@ -13,7 +13,7 @@ public class SocketOutput implements Output {
 
     @Override
     public void send(Response response) {
-        out.write(response.getProperty().concat("\n"));
+        out.write(response.getText());
         out.flush();
     }
 }

@@ -5,20 +5,26 @@ import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ConnectionService extends Thread {
+public class ConnectionService {
     private ConnectionReceiver receiver;
     private BlockingQueue<Socket> clientSockets;
+    private ConnectionThread connectionThread;
+    private volatile boolean stopped;
 
     public ConnectionService() {
         this.receiver = new ConnectionReceiver();
         this.clientSockets = new LinkedBlockingQueue<>();
+        this.connectionThread = new ConnectionThread();
+        this.stopped = true;
     }
 
-    @Override
-    public void run() {
-        while (!isInterrupted()) {
-            clientSockets.add(receiver.nextClientSocket());
-        }
+    public void start() {
+        connectionThread.start();
+        this.stopped = false;
+    }
+
+    public boolean isStopped() {
+        return stopped;
     }
 
     public SocketConnection nextClient() throws ConnectionServiceStoppedException {
@@ -26,7 +32,17 @@ public class ConnectionService extends Thread {
             return new SocketConnection(clientSockets.take());
 
         } catch (InterruptedException e) {
+            this.stopped = true;
             throw new ConnectionServiceStoppedException();
+        }
+    }
+
+    private class ConnectionThread extends Thread {
+        @Override
+        public void run() {
+            while (!isInterrupted()) {
+                clientSockets.add(receiver.nextClientSocket());
+            }
         }
     }
 }
