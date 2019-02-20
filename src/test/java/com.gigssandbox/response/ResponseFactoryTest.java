@@ -17,7 +17,7 @@ public class ResponseFactoryTest {
     @Test
     public void shouldCreateRegistrationResponseWhenRegistrationResultIsPassed() {
         Result givenResult = Result.REGISTRATION_SUCCESS;
-        Response expectedResponse = new Response("You have successfully registered");
+        Response expectedResponse = new Response("You have successfully registered\n");
 
         Response actualResponse = responseFactory.create(givenResult);
 

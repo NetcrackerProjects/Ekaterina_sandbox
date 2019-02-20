@@ -5,6 +5,6 @@ import com.gigssandbox.response.Response;
 
 public class ConsoleOutput implements Output {
     public void send(Response response) {
-        System.out.println(response.getProperty());
+        System.out.println(response.getText());
     }
 }

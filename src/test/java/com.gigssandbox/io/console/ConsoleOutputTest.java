@@ -29,7 +29,7 @@ public class ConsoleOutputTest {
 
     @Test
     public void shouldWriteRegistrationSuccessTextWhenRegistrationCommandIsPassed() {
-        String expectedOutput = "You have successfully registered\n";
+        String expectedOutput = "You have successfully registered\n\n";
         Response response = responseFactory.create(Result.REGISTRATION_SUCCESS);
 
         consoleOutput.send(response);
