@@ -23,7 +23,7 @@ public class MainClass {
 
         UserActivityManager userActivityManager = new UserActivityManager();
 
-        Thread csThread = new Thread(() -> {
+        Thread connectionServiceThread = new Thread(() -> {
             while (!connectionService.isStopped()) {
                 try {
                     SocketConnection connection = connectionService.nextClient();
@@ -36,13 +36,13 @@ public class MainClass {
             }
         });
 
-        csThread.start();
+        connectionServiceThread.start();
 
         java.lang.Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             connectionService.stop();
             userActivityManager.stop();
         }));
 
-        csThread.join();
+        connectionServiceThread.join();
     }
 }
