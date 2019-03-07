@@ -34,10 +34,10 @@ public class UserCommandHandlerTest {
     @Before
     public void setUp() {
         this.username = "John";
-        this.password = "Senya MC";
-        this.headliner = "Attack attack!";
+        this.password = "Senya_MC";
+        this.headliner = "Attack_attack!";
         this.gigDate = "2016-06-19";
-        this.gigCredentials = "Attack attack!:2016-06-19";
+        this.gigCredentials = "Attack_attack!:2016-06-19";
 
         this.user = User.builder()
                 .username(username)
@@ -52,7 +52,7 @@ public class UserCommandHandlerTest {
 
         this.gigs = new HashMap<>();
 
-        this.communityName = "very progressive";
+        this.communityName = "very_progressive";
         this.community = Community.builder()
                 .name(communityName)
                 .members(new HashSet<>())
@@ -72,18 +72,18 @@ public class UserCommandHandlerTest {
     public void shouldReturnRegistrationSuccessResultWhenLastCommandWasRegistration() {
         Result expectedResult = Result.REGISTRATION_SUCCESS;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
 
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
     public void shouldReturnLoginSuccessResultWhenLastCommandWasLogIn() {
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
         userCommandHandler.process(commandFactory.create("log_out"));
         Result expectedResult = Result.LOG_IN_SUCCESS;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("log_in,".concat(username).concat(",").concat(password)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("log_in", username, password)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -92,29 +92,29 @@ public class UserCommandHandlerTest {
     public void shouldReturnNotRegisteredResultWhenLastCommandWasLogInAndUserWasNotRegisteredYet() {
         Result expectedResult = Result.NOT_REGISTERED;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("log_in,".concat(username).concat(",").concat(password)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("log_in", username, password)));
 
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
     public void shouldReturnIncorrectPasswordResultWhanLastCommandWasLogInAndUserEnteredWrongPassword() {
-        String incorrectPassword = "in black";
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        String incorrectPassword = "in_black";
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
         Result expectedResult = Result.INCORRECT_PASSWORD;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("log_in,".concat(username).concat(",").concat(incorrectPassword)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("log_in", username, incorrectPassword)));
 
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
     public void shouldReturnJoinCommunitySuccessResultWhenLastCommandWasJoinCommunity() {
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
         this.communities.put(communityName, community);
         Result expectedResult = Result.JOIN_COMMUNITY_SUCCESS;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("join_community,".concat(communityName)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("join_community", communityName)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -131,7 +131,7 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnLogOutSuccessResultWhenLastCommandWasLogOut() {
         Result expectedResult = Result.LOG_OUT_SUCCESS;
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
 
         Result actualResult = userCommandHandler.process(commandFactory.create("log_out"));
 
@@ -167,20 +167,20 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnAlreadyLoggedInResultWhenUserIsAlreadyLoggedIn() {
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
         Result expectredResult = Result.ALREADY_LOGGED_IN;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("log_in,".concat(username).concat(",").concat(password)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("log_in", username, password)));
 
         assertEquals(expectredResult, actualResult);
     }
 
     @Test
     public void shouldReturnAlreadyRegisteredResultWhenUserIsAlreadyRegistered() {
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
         Result expectedResult = Result.ALREADY_REGISTERED;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -196,11 +196,11 @@ public class UserCommandHandlerTest {
 
     @Test
     public void shouldReturnJoinGigSuccessResultWhenUserTriesToJoinGig() {
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
         this.gigs.put(gigCredentials, gig);
         Result expectedResult = Result.JOIN_GIG_SUCCESS;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("join_gig,".concat(headliner).concat(",").concat(gigDate)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("join_gig", headliner, gigDate)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -208,10 +208,10 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnIncorrectDateResultWhenUserEnteredDateWithoutDay() {
         String wrongGigDate = "2010-09";
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
         Result expectedResult = Result.INCORRECT_DATE_FORMAT;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("join_gig,".concat(headliner).concat(",").concat(wrongGigDate)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("join_gig", headliner, wrongGigDate)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -219,10 +219,10 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnIncorrectDateResultWhenMadeMistakeInDateWhileJoiningGig() {
         String wrongGigDate = "2011-09-39";
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
         Result expectedResult = Result.INCORRECT_DATE_FORMAT;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("join_gig,".concat(headliner).concat(",").concat(wrongGigDate)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("join_gig", headliner, wrongGigDate)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -230,9 +230,9 @@ public class UserCommandHandlerTest {
     @Test
     public void shouldReturnNoAppropriateGigsResultWhenGigForJoiningCredentialsAreNotPresent() {
         Result expectedResult = Result.NO_SUCH_GIG;
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("join_gig,".concat(headliner).concat(",").concat(gigDate)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("join_gig",headliner,gigDate)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -242,9 +242,9 @@ public class UserCommandHandlerTest {
         Result expectedResult = Result.LEAVE_GIG_SUCCESS;
         this.gig.add(user);
         this.gigs.put(gigCredentials, gig);
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("leave_gig,".concat(headliner).concat(",").concat(gigDate)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("leave_gig", headliner, gigDate)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -254,9 +254,9 @@ public class UserCommandHandlerTest {
         String wrongGigDate = "2013-99-21";
         Result expectedResult = Result.INCORRECT_DATE_FORMAT;
         this.gig.add(user);
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("leave_gig,".concat(headliner).concat(",").concat(wrongGigDate)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("leave_gig", headliner, wrongGigDate)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -265,9 +265,9 @@ public class UserCommandHandlerTest {
     public void shouldReturnNoSuchGigResultWhenGigForLeavingIsNotPresent() {
         String wrongGigDate = "2013-10-12";
         Result expectedResult = Result.NO_SUCH_GIG;
-        userCommandHandler.process(commandFactory.create("register,".concat(username).concat(",").concat(password)));
+        userCommandHandler.process(commandFactory.create(joinStrings("register", username, password)));
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("leave_gig,".concat(headliner).concat(",").concat(wrongGigDate)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("leave_gig", headliner, wrongGigDate)));
 
         assertEquals(expectedResult, actualResult);
     }
@@ -276,8 +276,35 @@ public class UserCommandHandlerTest {
     public void shouldReturnNoSuchCommunityResultWhenEnteredCommunityIsNotPresent() {
         Result expectedResult = Result.NO_SUCH_COMMUNITY;
 
-        Result actualResult = userCommandHandler.process(commandFactory.create("join_community,".concat(communityName)));
+        Result actualResult = userCommandHandler.process(commandFactory.create(joinStrings("join_community", communityName)));
 
         assertEquals(expectedResult, actualResult);
+    }
+
+    private String joinStrings(String... strings) {
+        String separator = " ";
+        String result = String.join(separator, strings).strip();
+        return result;
+    }
+
+
+
+    @Test
+    public void performanceOfExistsVsGet() {
+        Map<Integer, String> elements = new HashMap<>();
+        for (int i = 0; i < 10000; i++) {
+            elements.put(i, "banana");
+        }
+
+        long start1 = System.nanoTime();
+        boolean b1 = elements.get(3829) != null;
+        long end1 = System.nanoTime();
+
+        long start2 = System.nanoTime();
+        boolean b2 = elements.containsKey(3829);
+        long end2 = System.nanoTime();
+
+        System.out.println("\"get\" performance: " + (end1 - start1));
+        System.out.println("\"contains\" performance: " + (end2 - start2));
     }
 }

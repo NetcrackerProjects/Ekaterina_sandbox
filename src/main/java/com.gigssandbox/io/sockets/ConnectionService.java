@@ -1,6 +1,7 @@
 package com.gigssandbox.io.sockets;
 
 import com.gigssandbox.exceptions.ConnectionServiceStoppedException;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -8,19 +9,22 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ConnectionService {
     private ConnectionReceiver receiver;
     private BlockingQueue<Socket> clientSockets;
-    private ConnectionThread connectionThread;
     private volatile boolean stopped;
 
     public ConnectionService() {
         this.receiver = new ConnectionReceiver();
         this.clientSockets = new LinkedBlockingQueue<>();
-        this.connectionThread = new ConnectionThread();
         this.stopped = true;
     }
 
     public void start() {
-        connectionThread.start();
         this.stopped = false;
+
+        new Thread(() -> {
+            while (!stopped) {
+                clientSockets.add(receiver.nextClientSocket());
+            }
+        }).start();
     }
 
     public boolean isStopped() {
@@ -37,12 +41,12 @@ public class ConnectionService {
         }
     }
 
-    private class ConnectionThread extends Thread {
-        @Override
-        public void run() {
-            while (!isInterrupted()) {
-                clientSockets.add(receiver.nextClientSocket());
-            }
-        }
+    public void stop() {
+        this.stopped = true;
+    }
+
+    public void close() throws IOException {
+        receiver.close();
+        this.stopped = true;
     }
 }

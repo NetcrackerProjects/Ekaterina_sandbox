@@ -46,6 +46,6 @@ public class CommandFactory {
     }
 
     private String[] split(String string) {
-        return Arrays.stream(string.strip().split(",")).map(String::strip).toArray(String[]::new);
+        return Arrays.stream(string.strip().split(" ")).map(String::strip).toArray(String[]::new);
     }
 }

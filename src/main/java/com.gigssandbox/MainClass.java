@@ -11,13 +11,9 @@ import com.gigssandbox.services.GigService;
 import com.gigssandbox.services.UserService;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class MainClass {
-    private static final Executor executor = Executors.newFixedThreadPool(100);
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Map<String, User> users = new HashMap<>();
         Map<String, Community> communities = new HashMap<>();
         Map<String, Gig> gigs = new HashMap<>();
@@ -25,15 +21,28 @@ public class MainClass {
         ConnectionService connectionService = new ConnectionService();
         connectionService.start();
 
-        while (!connectionService.isStopped()) {
-            try {
-                SocketConnection connection = connectionService.nextClient();
+        UserActivityManager userActivityManager = new UserActivityManager();
 
-                executor.execute(new UserActivity(new UserService(users), new CommunityService(communities), new GigService(gigs), connection));
+        Thread csThread = new Thread(() -> {
+            while (!connectionService.isStopped()) {
+                try {
+                    SocketConnection connection = connectionService.nextClient();
 
-            } catch (ConnectionServiceStoppedException e) {
-                break;
+                    userActivityManager.execute(new UserActivity(new UserService(users), new CommunityService(communities), new GigService(gigs), connection));
+
+                } catch (ConnectionServiceStoppedException e) {
+                    break;
+                }
             }
-        }
+        });
+
+        csThread.start();
+
+        java.lang.Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            connectionService.stop();
+            userActivityManager.stop();
+        }));
+
+        csThread.join();
     }
 }

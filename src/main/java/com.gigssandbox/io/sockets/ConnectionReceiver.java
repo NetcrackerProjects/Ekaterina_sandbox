@@ -24,7 +24,11 @@ class ConnectionReceiver extends Thread {
             return serverSocket.accept();
 
         } catch (IOException e) {
-            throw new ConnectionReceivingException();
+            throw new ConnectionReceivingException(e);
         }
+    }
+
+    void close() throws IOException {
+        serverSocket.close();
     }
 }

@@ -1,7 +1,9 @@
 package com.gigssandbox.io.sockets;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,10 +19,15 @@ public class ConnectionReceiverTest {
 
     @Test
     public void shouldReturnClientSocketWhenClientHasConnected() throws IOException {
-        Socket socketOfRemoteClient = new Socket("127.0.0.1", 1234);
+        new Socket().connect(new InetSocketAddress("localhost", 1234));
 
         Socket fetchedClientSocket = receiver.nextClientSocket();
 
         assertNotNull(fetchedClientSocket);
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        receiver.close();
     }
 }
