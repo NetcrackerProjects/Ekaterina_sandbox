@@ -1,5 +1,6 @@
 package com.gigssandbox.io.sockets;
 
+import com.gigssandbox.exceptions.ConnectionReceivingException;
 import com.gigssandbox.exceptions.ConnectionServiceStoppedException;
 import java.io.IOException;
 import java.net.Socket;
@@ -22,7 +23,11 @@ public class ConnectionService {
 
         new Thread(() -> {
             while (!stopped) {
-                clientSockets.add(receiver.nextClientSocket());
+                try {
+                    clientSockets.add(receiver.nextClientSocket());
+                } catch (ConnectionReceivingException e) {
+                    System.out.println("Failed to receive new client. Trying next one");
+                }
             }
         }).start();
     }

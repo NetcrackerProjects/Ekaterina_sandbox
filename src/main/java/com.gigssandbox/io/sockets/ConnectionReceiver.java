@@ -19,7 +19,7 @@ class ConnectionReceiver extends Thread {
         }
     }
 
-    Socket nextClientSocket() {
+    Socket nextClientSocket() throws ConnectionReceivingException {
         try {
             return serverSocket.accept();
 

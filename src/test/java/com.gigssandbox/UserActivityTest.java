@@ -22,8 +22,8 @@ import static org.junit.Assert.assertEquals;
 public class UserActivityTest {
     private Socket clientSocket;
 
-    private DataOutputStream out;
-    private BufferedReader in;
+    private DataOutputStream clientOutput;
+    private BufferedReader clientInput;
 
     private UserActivity userActivity;
     private ConnectionService connectionService;
@@ -36,8 +36,8 @@ public class UserActivityTest {
         this.clientSocket = new Socket();
         clientSocket.connect(new InetSocketAddress("localhost", 1234));
 
-        this.out = new DataOutputStream(clientSocket.getOutputStream());
-        this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        this.clientOutput = new DataOutputStream(clientSocket.getOutputStream());
+        this.clientInput = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
         this.userActivity = new UserActivity(
                 new UserService(new HashMap<>()),
@@ -50,20 +50,25 @@ public class UserActivityTest {
     @Test
     public void shouldRespondWhenRegistrationCommandIsSent() throws IOException {
         new UserActivityManager().execute(userActivity);
+        clientSends("register raccoon 1011 \n");
 
-        out.write("register raccoon 1011 \n".getBytes(StandardCharsets.UTF_8));
+        String response = clientReads();
 
-        String actualResponse = in.readLine();
-        String expectedResponse = "You have successfully registered";
-        assertEquals(expectedResponse, actualResponse);
+        assertEquals("You have successfully registered", response);
     }
 
     @After
     public void tearDown() throws IOException {
         clientSocket.close();
-        out.close();
         connectionService.close();
-        in.close();
+    }
+
+    private void clientSends(String text) throws IOException {
+        clientOutput.write(text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private String clientReads() throws IOException {
+        return clientInput.readLine();
     }
 }
 

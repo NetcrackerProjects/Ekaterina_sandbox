@@ -3,6 +3,8 @@ package com.gigssandbox.io.sockets;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+
+import com.gigssandbox.exceptions.ConnectionReceivingException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +20,7 @@ public class ConnectionReceiverTest {
     }
 
     @Test
-    public void shouldReturnClientSocketWhenClientHasConnected() throws IOException {
+    public void shouldReturnClientSocketWhenClientHasConnected() throws IOException, ConnectionReceivingException {
         new Socket().connect(new InetSocketAddress("localhost", 1234));
 
         Socket fetchedClientSocket = receiver.nextClientSocket();
